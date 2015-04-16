@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Investments
 {
@@ -11,8 +12,28 @@ namespace Investments
 
         public void PobieranieDanych()
         {
-            PobieranieDanych tmp = new PobieranieDanych();
-            tmp.PobierzKursyWalut();
+            using (var ctx = new GameDbContext())
+            {
+                List<Inwestycja> waluty = new List<Inwestycja>();
+                PobieranieDanych tmp = new PobieranieDanych();
+                waluty = tmp.PobierzKursyWalut();
+                MessageBox.Show("Waluty:");
+                try
+                {
+                    foreach (Inwestycja inv in waluty)
+                    {
+                        ctx.Inwestycja.Add(inv);
+
+                        // MessageBox.Show(inv.ToString());
+                    }
+                    ctx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd zapisu do bazy danych walut"+ex);
+                }
+                MessageBox.Show("Koniec");
+            }
         }
 
 
@@ -60,7 +81,7 @@ namespace Investments
             using (var ctx = new GameDbContext())
             {
                 // Tworzymy grupę w pamięci
-                Grupa grupa = new Grupa() { Name = "Akcje" };
+                Grupa grupa = new Grupa() { Name = "Sosny" };
 
                 Inwestycja inwestycja;
 
@@ -72,7 +93,7 @@ namespace Investments
                 // Grupę dodajemy do kolekcji reprezentującej dane w bazie danych
                 ctx.Grupa.Add(grupa);
 
-                
+
 
                 // Zapisujemy zmienne przechowywane w kontekście
                 ctx.SaveChanges();

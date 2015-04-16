@@ -35,6 +35,7 @@
             this.hasło_label = new System.Windows.Forms.Label();
             this.nickname_label = new System.Windows.Forms.Label();
             this.nickname_txt = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // login_txt
@@ -98,11 +99,22 @@
             this.nickname_txt.TabIndex = 5;
             this.nickname_txt.TextChanged += new System.EventHandler(this.nickname_txt_TextChanged);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(36, 224);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "zaloguj";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // GraInwestycyjna
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 262);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.nickname_label);
             this.Controls.Add(this.nickname_txt);
             this.Controls.Add(this.hasło_label);
@@ -126,6 +138,7 @@
         private System.Windows.Forms.Label hasło_label;
         private System.Windows.Forms.Label nickname_label;
         private System.Windows.Forms.TextBox nickname_txt;
+        private System.Windows.Forms.Button button2;
     }
 }
 

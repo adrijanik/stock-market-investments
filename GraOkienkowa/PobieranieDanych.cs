@@ -8,55 +8,62 @@ using System.Text;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using System.Windows.Forms;
 
 namespace Investments
 {
+
     class PobieranieDanych
     {
-        public void PobierzKursyWalut()
+
+        public List<Inwestycja> PobierzKursyWalut()
         {
-            Console.WriteLine("Pobieramy dane z NBP!");
+            List<Inwestycja> waluty = new List<Inwestycja>();
+            WebClient Client = new WebClient();
 
-            using (WebClient Client = new WebClient())
+            MessageBox.Show("Pobieramy dane z NBP!");
+
+            Client.DownloadFile("http://www.nbp.pl/kursy/xml/dir.txt", "kursy.txt");
+            string path = "kursy.txt";
+            StreamReader sr = File.OpenText(path);
+            string line = "";
+            var liczbaLinii = 0;
+            try
             {
-                Client.DownloadFile("http://www.nbp.pl/kursy/xml/dir.txt", "kursy.txt");
+                line = sr.ReadLine();
+                liczbaLinii = File.ReadLines(path).Count();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("The file could not be read:" + e.Message);
+            }
 
-                string line = "";
-                var liczbaLinii = 0;
-                try
+            char[] buffor = new char[line.Length];
+
+            StringReader stream = new StringReader(line);
+            stream.Read(buffor, 0, 11);
+           // MessageBox.Show("before while: " + buffor[0]);
+            bool end = false;
+            while (buffor[0] != 'a' && end == false)
+            {
+
+                while ((line = sr.ReadLine()) != null && end == false)
                 {
-                    string path = "kursy.txt";
-                    using (StreamReader sr = File.OpenText(path))
-                    {
-                        line = sr.ReadLine();
-                        liczbaLinii = File.ReadLines(path).Count();
-                        //   Console.WriteLine(liczbaLinii);
-                        //   Console.WriteLine(line);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("The file could not be read:");
-                    Console.WriteLine(e.Message);
-                }
+                    buffor = new char[line.Length];
 
-
-
-                char[] buffor = new char[line.Length];
-
-                using (StringReader sr = new StringReader(line))
-                {
-                    // for (int i=1;i<=liczbaLinii;i++)
-                    //{
+                    stream = new StringReader(line);
                     // Read 11 characters from the string into the array.
-                    sr.Read(buffor, 0, 11);
-                    if (buffor[0] == 'c')
+                    stream.Read(buffor, 0, 11);
+                  //  MessageBox.Show("in while: " + buffor[0]);
+
+                    if (buffor[0] == 'a')
                     {
+                        end = true;
                         string nazwa = new string(buffor);
                         string url = "http://www.nbp.pl/kursy/xml/" + nazwa + ".xml";
-                        Console.WriteLine(buffor);
+                  //      MessageBox.Show(buffor.ToString());
 
-                        Console.WriteLine(url);
+                  //      MessageBox.Show(url);
                         nazwa = "dane.xml";
                         Client.DownloadFile(url, nazwa);
 
@@ -65,22 +72,19 @@ namespace Investments
                         {
                             // Create an instance of StreamReader to read from a file.
                             // The using statement also closes the StreamReader.
-                            using (StreamReader str = new StreamReader(nazwa))
+                            StreamReader str = new StreamReader(nazwa);
+                            string line1;
+                            // Read and display lines from the file until the end of 
+                            // the file is reached.
+                            while ((line1 = str.ReadLine()) != null)
                             {
-                                string line1;
-                                // Read and display lines from the file until the end of 
-                                // the file is reached.
-                                while ((line1 = str.ReadLine()) != null)
-                                {
-                                    //   Console.WriteLine(line1);
-                                }
+                                //   Console.WriteLine(line1);
                             }
                         }
                         catch (Exception e)
                         {
                             // Let the user know what went wrong.
-                            Console.WriteLine("The file could not be read:");
-                            Console.WriteLine(e.Message);
+                            MessageBox.Show("The file could not be read:" + e.Message);
                         }
 
                         //Parsowanie XMLa:
@@ -90,32 +94,41 @@ namespace Investments
                         xmlDoc.Load(nazwa); // Load the XML document from the specified file
 
                         // Get elements
-                        XmlNodeList pozycja = xmlDoc.GetElementsByTagName("pozycja");
+                        XmlNodeList data = xmlDoc.GetElementsByTagName("data_publikacji");
 
+                        DateTime data_time = DateTime.Parse(data[0].InnerText);
+                   
 
-                        // Display the results
-                        Console.WriteLine("pozycja: " + pozycja[0].InnerText);
+                        try
+                        {
+                            XmlNodeList pozycja = xmlDoc.SelectNodes("/tabela_kursow/pozycja");
+                     //       MessageBox.Show("pobieram dane o kursach");
+                            Grupa grupa = new Grupa { Name = "Waluty" };
+                            foreach (XmlNode xn in pozycja)
+                            {
 
-                        /*TODO:
-                         * wyciągnąć informacje o wartość : cena kupna, cena sprzedaży, data, typ, przelicznik
-                         * dla każdej waluty stworzyć osobną instancję klasy Inwestycja i od tego momentu można 
-                         * wrzucać te dane do bazy danych
-                         */
+                                XmlNodeList lista_atrybutów = xn.ChildNodes;
+                                int przelicznik = Int32.Parse(lista_atrybutów[2].InnerText);
+                                string kurs1_txt =lista_atrybutów[4].InnerText;
+                                double kurs = Convert.ToDouble(kurs1_txt);
+                            
+                                Inwestycja tmp = new Inwestycja { Nazwa = lista_atrybutów[0].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
+                                waluty.Add(tmp);
+                         
+                            }
 
-
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Błąd wyłuskiwania danych o walutach " + ex);
+                        }
                     }
-                    //}
-
-
-                    // Read the rest of the string starting at the current string position.
-                    // Put in the array starting at the 6th array member.
-                    //  sr.Read(b, 5, line.Length - 13);
-                    //    Console.WriteLine(b);
                 }
 
-                Console.Read();
             }
+            return waluty;
         }
+
     }
 }
 
