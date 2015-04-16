@@ -27,7 +27,7 @@ namespace GraInwestycyjna
         //    service.DodajPrzykladowoInwestycje();
         //    service.WypiszInwestycje();
 
-            MessageBox.Show("Done!");
+         //   MessageBox.Show("Done!");
         }
 
         private void login_txt_TextChanged(object sender, EventArgs e)
@@ -42,15 +42,11 @@ namespace GraInwestycyjna
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Użytkownik tmp = new Użytkownik() {Login=login,Hasło=hasło,Nickname=nickname };
+            Użytkownik tmp = new Użytkownik() {Login=login,Hasło=hasło,Nickname=nickname,StanKonta=100000 };
             ctx.Użytkownik.Add(tmp);
             ctx.SaveChanges();
             MessageBox.Show("Done! Account created!");
 
-            foreach (var s in ctx.Użytkownik)
-            {
-                MessageBox.Show(s.ToString());
-            }
         }
 
         private void nickname_txt_TextChanged(object sender, EventArgs e)

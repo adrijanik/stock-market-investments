@@ -35,7 +35,7 @@ namespace Investments
             context.Grupa.Add(grupa);
 
             Inwestycja tmp = new Inwestycja() { Nazwa = "PGE", Kurs = 20.54, Data = new DateTime(2000, 2, 2), Przelicznik = 1, Grupa = grupa };
-            Użytkownik user = new Użytkownik() {Id = 0, Nickname ="Michał", Login="Nowak", Hasło="123abc" };
+            Użytkownik user = new Użytkownik() {Id = 0, Nickname ="Michał", Login="Nowak",StanKonta=1000000, Hasło="123abc" };
             context.Użytkownik.Add(user);
             Operacja operacja = new Operacja() {Id = 0, Ilość = 5, Transakcja = transakcja.kupno, Inwestycja = tmp, StempelCzasowy = new DateTime(2015,4,4), Użytkownik=user };
             context.Operacja.Add(operacja);

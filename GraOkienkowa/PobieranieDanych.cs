@@ -21,7 +21,7 @@ namespace Investments
             List<Inwestycja> waluty = new List<Inwestycja>();
             WebClient Client = new WebClient();
 
-            MessageBox.Show("Pobieramy dane z NBP!");
+           // MessageBox.Show("Pobieramy dane z NBP!");
 
             Client.DownloadFile("http://www.nbp.pl/kursy/xml/dir.txt", "kursy.txt");
             string path = "kursy.txt";
@@ -112,7 +112,7 @@ namespace Investments
                                 string kurs1_txt =lista_atrybutów[4].InnerText;
                                 double kurs = Convert.ToDouble(kurs1_txt);
                             
-                                Inwestycja tmp = new Inwestycja { Nazwa = lista_atrybutów[0].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
+                                Inwestycja tmp = new Inwestycja { Nazwa = lista_atrybutów[3].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
                                 waluty.Add(tmp);
                          
                             }
