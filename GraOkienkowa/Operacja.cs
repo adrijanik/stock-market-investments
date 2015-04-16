@@ -17,6 +17,7 @@ namespace Investments
         public int Id { get; set; }
         public transakcja Transakcja { get; set; }
         public int Ilość { get; set; }
+        public DateTime StempelCzasowy { get; set; }
         public int InwestycjaId { get; set; }
         public int UżytkownikId { get; set; }
 

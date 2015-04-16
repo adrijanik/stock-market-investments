@@ -17,7 +17,7 @@ namespace Investments
                 List<Inwestycja> waluty = new List<Inwestycja>();
                 PobieranieDanych tmp = new PobieranieDanych();
                 waluty = tmp.PobierzKursyWalut();
-                MessageBox.Show("Waluty:");
+          //      MessageBox.Show("Waluty:");
                 try
                 {
                     foreach (Inwestycja inv in waluty)
@@ -32,7 +32,7 @@ namespace Investments
                 {
                     MessageBox.Show("Błąd zapisu do bazy danych walut"+ex);
                 }
-                MessageBox.Show("Koniec");
+             //   MessageBox.Show("Koniec");
             }
         }
 
@@ -76,7 +76,7 @@ namespace Investments
         }
 
 
-        public void DodajPrzykladowoStudenta()
+        public void DodajPrzykladowoInwestycje()
         {
             using (var ctx = new GameDbContext())
             {

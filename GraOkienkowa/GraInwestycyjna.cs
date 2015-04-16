@@ -24,7 +24,7 @@ namespace GraInwestycyjna
 
             service.PobieranieDanych();
 
-            service.DodajPrzykladowoStudenta();
+        //    service.DodajPrzykladowoInwestycje();
         //    service.WypiszInwestycje();
 
             MessageBox.Show("Done!");
@@ -58,12 +58,26 @@ namespace GraInwestycyjna
             nickname = nickname_txt.Text;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void zaloguj_Click(object sender, EventArgs e)
         {
-            Grupa grupa = new Grupa { Name = "Waluty" };
-            Inwestycja tmp1 = new Inwestycja() { Nazwa = "tymczasowa", Kurs = 20.54, Data = new DateTime(2000, 2, 2), Przelicznik = 1, Grupa = grupa };
-            ctx.Inwestycja.Add(tmp1);
-            ctx.SaveChanges();
+            //autoryzacja użytkownika
+            bool czyIstnieje=false;
+            foreach(var user in ctx.Użytkownik)
+            {
+                if (login == user.Login && hasło == user.Hasło)
+                    czyIstnieje = true;
+            }
+            if (czyIstnieje)
+            {
+                MessageBox.Show("Zalogowano!");//Login
+                MainPanel panel = new MainPanel();
+                panel.Show();
+            }
+            else
+                MessageBox.Show("Błąd logowania. Nie ma takiego użytkownika!");
+
+            //ctx.Inwestycja.Add();
+            //ctx.SaveChanges();
         }
     }
 }
