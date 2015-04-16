@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Investments
+{
+    /// <summary>
+    /// Specjalna klasa, któa ma pomagać w inicjalizowaniu bazy danych.
+    /// Może dziedziczyć po kilku klasach - jeżeli dziedziczy po DropCreateDatabaseIfModelChanges, 
+    /// to baza zostanie przebudowana przy każdej zmianie modelu.
+    /// Jezeli dziedziczy po DropCreateDatabaseAlways to przy każdym uruchomieniu baza danych tworzona jest od nowa.
+    /// </summary>
+    public class GameDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<GameDbContext>
+    {
+
+        /// <summary>
+        /// Specjalna metoda, która jest wywoływana raz po przebudowaniu bazy danych.
+        /// Założenie jest, że baza jest pusta, więc trzeba ją wypełnić początkowymi danymi.
+        /// </summary>
+        /// <param name="context"></param>
+        protected override void Seed(GameDbContext context)
+        {
+            Grupa grupa;
+
+            grupa = new Grupa() { Name = "Akcje" };
+            grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "ENEA", Kurs = 16.43, Data = new DateTime(2000, 1, 1), Przelicznik = 1 });
+            grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "PZU", Kurs = 499.80, Data = new DateTime(2010, 2, 2), Przelicznik = 1 });
+            context.Grupa.Add(grupa);
+
+            grupa = new Grupa() { Name = "Obligacje" };
+            grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "BST0319", Kurs = 100.30, Data = new DateTime(2000, 1, 1), Przelicznik = 1 });
+            grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "DS1020", Kurs = 117.52, Data = new DateTime(2000, 2, 2), Przelicznik = 1 });
+            context.Grupa.Add(grupa);
+
+            Inwestycja tmp = new Inwestycja() { Nazwa = "PGE", Kurs = 20.54, Data = new DateTime(2000, 2, 2), Przelicznik = 1, Grupa = grupa };
+            Użytkownik user = new Użytkownik() {Id = 0, Nickname ="Michał", Login="Nowak", Hasło="123abc" };
+            context.Użytkownik.Add(user);
+            Operacja operacja = new Operacja() {Id = 0, Ilość = 5, Transakcja = transakcja.kupno, Inwestycja = tmp, Użytkownik=user };
+            context.Operacja.Add(operacja);
+
+            context.SaveChanges();
+            base.Seed(context);
+        }
+    }
+}
