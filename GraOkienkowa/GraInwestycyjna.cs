@@ -14,15 +14,16 @@ namespace GraInwestycyjna
     
     public partial class GraInwestycyjna : Form
     {
+       
         public GameDbContext ctx = new GameDbContext();
         private string login = "", hasło = "", nickname="";
-       
         public GraInwestycyjna()
         {
             InitializeComponent();
             var service = new ObsługaBazyDanych();
-
-            service.PobieranieDanych();
+            hasło_txt.PasswordChar='*';
+            hasło_txt.MaxLength = 8;
+           // service.PobieranieDanych();
 
         //    service.DodajPrzykladowoInwestycje();
         //    service.WypiszInwestycje();
