@@ -23,7 +23,8 @@ namespace GraInwestycyjna
             var service = new ObsługaBazyDanych();
             hasło_txt.PasswordChar='*';
             hasło_txt.MaxLength = 8;
-           // service.PobieranieDanych();
+            service.PobieranieDanychAkcje();
+         //   service.PobieranieDanychWaluty();
 
         //    service.DodajPrzykladowoInwestycje();
         //    service.WypiszInwestycje();

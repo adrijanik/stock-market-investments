@@ -10,32 +10,17 @@ namespace Investments
     public class ObsługaBazyDanych
     {
 
-        public void PobieranieDanych()
+        public void PobieranieDanychWaluty()
         {
-            using (var ctx = new GameDbContext())
-            {
-                List<Inwestycja> waluty = new List<Inwestycja>();
-                PobieranieDanych tmp = new PobieranieDanych();
-                waluty = tmp.PobierzKursyWalut();
-          //      MessageBox.Show("Waluty:");
-                try
-                {
-                    foreach (Inwestycja inv in waluty)
-                    {
-                        ctx.Inwestycja.Add(inv);
-
-                        // MessageBox.Show(inv.ToString());
-                    }
-                    ctx.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Błąd zapisu do bazy danych walut"+ex);
-                }
-             //   MessageBox.Show("Koniec");
-            }
+            PobieranieDanych tmp = new PobieranieDanych();
+            tmp.PobierzKursyWalut();
+           
         }
-
+        public void PobieranieDanychAkcje()
+        {
+            PobieranieDanych tmp = new PobieranieDanych();
+            tmp.PobierzNotowaniaGiełdowe();
+        }
 
 
         /// <summary>
