@@ -108,7 +108,12 @@ namespace Investments
                     {
                         XmlNodeList pozycja = xmlDoc.SelectNodes("/tabela_kursow/pozycja");
                         //       MessageBox.Show("pobieram dane o kursach");
-                        Grupa grupa = new Grupa { Name = "Waluty" };
+
+                        var grupa = (from gr in ctx.Grupa
+                                     where gr.Name == "Waluty"
+                                     select gr).First();
+
+                        
                         foreach (XmlNode xn in pozycja)
                         {
 
@@ -130,8 +135,8 @@ namespace Investments
                     {
                         // MessageBox.Show("Błąd wyłuskiwania danych o walutach " + ex);
                     }
-                    
 
+                    break; //skasuj do wczytania danych!!!
                 }
                 // return waluty;
             }

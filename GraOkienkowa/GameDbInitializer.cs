@@ -34,6 +34,10 @@ namespace Investments
             grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "DS1020", Kurs = 117.52, Data = new DateTime(2000, 2, 2), Przelicznik = 1 });
             context.Grupa.Add(grupa);
 
+            grupa = new Grupa { Name = "Waluty" };
+            grupa.Inwestycje.Add(new Inwestycja { Nazwa = "EURASY", Kurs = 100, Przelicznik = 1, Data = new DateTime(2000,1,1) });
+            context.Grupa.Add(grupa);          
+
             Inwestycja tmp = new Inwestycja() { Nazwa = "PGE", Kurs = 20.54, Data = new DateTime(2000, 2, 2), Przelicznik = 1, Grupa = grupa };
             Użytkownik user = new Użytkownik() {Id = 0, Nickname ="Michał", Login="Nowak",StanKonta=1000000, Hasło="123abc" };
             context.Użytkownik.Add(user);
