@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Investments;
+using System.Configuration;
 
 namespace GraInwestycyjna
 {
@@ -33,14 +34,16 @@ namespace GraInwestycyjna
         private void portfel_Click(object sender, EventArgs e)
         {
           //  var data = ctx.Użytkownik.Select(p => p);
+            string userPasswd = ConfigurationManager.AppSettings["UserPasswd"];
+           // MessageBox.Show(userPasswd);
 
             using (var form = new GraInwestycyjna())
             {
-                MessageBox.Show(form.haslo_loged_user);
+               
                 try
                 {
                     var data = (from user in ctx.Użytkownik
-                                where user.Hasło == form.haslo_loged_user
+                                where user.Hasło == userPasswd
                                 select user).First();
 
                     dataGridView1.DataSource = data.Operacja.ToList();

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Investments;
+using System.Configuration;
 
 namespace GraInwestycyjna
 {
@@ -16,15 +17,14 @@ namespace GraInwestycyjna
     {
         
         public GameDbContext ctx = new GameDbContext();
-        public string login = "", hasło = "adri", nickname="",haslo_loged_user="";
+        public string login = "", hasło = "", nickname="";
         public GraInwestycyjna()
         {
             InitializeComponent();
             var service = new ObsługaBazyDanych();
             hasło_txt.PasswordChar='*';
             hasło_txt.MaxLength = 8;
-            if (haslo_loged_user!= "")
-                service.DodajOperacjeUżytkownikowi(haslo_loged_user);
+
 
          //   service.PobieranieDanychAkcje();
          //   service.PobieranieDanychWaluty();
@@ -77,30 +77,35 @@ namespace GraInwestycyjna
                 login_txt.Focus();
                 DialogResult = DialogResult.None;
             }
-
-           
-
-
-            //autoryzacja użytkownika
-            
-            
-            
-
-            //ctx.Inwestycja.Add();
-            //ctx.SaveChanges();
         }
+
+        //autoryzacja użytkownika           
         public bool isValidCredentials()
         {
             bool czyIstnieje = false;
             foreach (var user in ctx.Użytkownik)
             {
                 if (login == user.Login && hasło == user.Hasło)
+                {
                     czyIstnieje = true;
+                    UpdateConfig("UserPasswd",hasło);
+    //                Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
+      //              config.AppSettings.Settings.Add("UserPasswd", hasło);
+        //            config.Save(ConfigurationSaveMode.Modified);
+
+        /*            Configuration configuration =
+                    ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    configuration.AppSettings.Settings["Login"].Value= login;
+                    configuration.Save(ConfigurationSaveMode.Full, true);
+                    ConfigurationManager.RefreshSection("appSettings");
+                
+         */ }
+
             }
             if (czyIstnieje)
             {
                 
-                haslo_loged_user = hasło;
+                
              //   MessageBox.Show("Zalogowano! " + haslo_loged_user);//Login
             //    MainPanel panel = new MainPanel();
             //    panel.Show();
@@ -111,6 +116,15 @@ namespace GraInwestycyjna
                // MessageBox.Show("Błąd logowania. Nie ma takiego użytkownika!");
                 return false;
             }
+        }
+        private void UpdateConfig(string key, string value)
+        {
+            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configFile.AppSettings.Settings[key].Value = value;
+
+            //configFile.Save();
+            configFile.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 }
