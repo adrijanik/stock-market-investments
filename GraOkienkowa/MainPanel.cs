@@ -19,8 +19,7 @@ namespace GraInwestycyjna
         public GameDbContext ctx = new GameDbContext();
         public MainPanel()
         {
-            InitializeComponent();
-           
+            InitializeComponent();  
         }
 
         private void Rynek_Click(object sender, EventArgs e)
@@ -33,10 +32,24 @@ namespace GraInwestycyjna
 
         private void portfel_Click(object sender, EventArgs e)
         {
-            var data = ctx.Użytkownik.Select(p => p);
+          //  var data = ctx.Użytkownik.Select(p => p);
 
-            dataGridView1.DataSource = data.ToList();
+            using (var form = new GraInwestycyjna())
+            {
+                MessageBox.Show(form.haslo_loged_user);
+                try
+                {
+                    var data = (from user in ctx.Użytkownik
+                                where user.Hasło == form.haslo_loged_user
+                                select user).First();
 
+                    dataGridView1.DataSource = data.Operacja.ToList();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd wyświetlania operacji w portfelu: "+ex);
+                }
+            }
             /*TODO:
              * Wybrać tylko inwestycje zalogowanego użytkownika
              * te, które niosą ze sobą jakąś informację (nr id jej nie niosą)

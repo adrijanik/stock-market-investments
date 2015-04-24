@@ -14,20 +14,23 @@ namespace GraInwestycyjna
     
     public partial class GraInwestycyjna : Form
     {
-       
+        
         public GameDbContext ctx = new GameDbContext();
-        private string login = "", hasło = "", nickname="";
+        public string login = "", hasło = "adri", nickname="",haslo_loged_user="";
         public GraInwestycyjna()
         {
             InitializeComponent();
             var service = new ObsługaBazyDanych();
             hasło_txt.PasswordChar='*';
             hasło_txt.MaxLength = 8;
-          //  service.PobieranieDanychAkcje();
-            service.PobieranieDanychWaluty();
+            if (haslo_loged_user!= "")
+                service.DodajOperacjeUżytkownikowi(haslo_loged_user);
 
-        //    service.DodajPrzykladowoInwestycje();
-        //    service.WypiszInwestycje();
+         //   service.PobieranieDanychAkcje();
+         //   service.PobieranieDanychWaluty();
+
+         //   service.DodajPrzykladowoInwestycje();
+         //   service.WypiszInwestycje();
 
          //   MessageBox.Show("Done!");
         }
@@ -58,24 +61,56 @@ namespace GraInwestycyjna
 
         private void zaloguj_Click(object sender, EventArgs e)
         {
+           
+            if (isValidCredentials()) 
+            { 
+                DialogResult = DialogResult.OK;
+               // main_panel.ShowDialog();
+                this.Close(); 
+                
+                
+            } 
+            else 
+            { 
+                //messageLabel.Visible = true; 
+                MessageBox.Show("Failed to login");
+                login_txt.Focus();
+                DialogResult = DialogResult.None;
+            }
+
+           
+
+
             //autoryzacja użytkownika
-            bool czyIstnieje=false;
-            foreach(var user in ctx.Użytkownik)
+            
+            
+            
+
+            //ctx.Inwestycja.Add();
+            //ctx.SaveChanges();
+        }
+        public bool isValidCredentials()
+        {
+            bool czyIstnieje = false;
+            foreach (var user in ctx.Użytkownik)
             {
                 if (login == user.Login && hasło == user.Hasło)
                     czyIstnieje = true;
             }
             if (czyIstnieje)
             {
-                MessageBox.Show("Zalogowano!");//Login
-                MainPanel panel = new MainPanel();
-                panel.Show();
+                
+                haslo_loged_user = hasło;
+             //   MessageBox.Show("Zalogowano! " + haslo_loged_user);//Login
+            //    MainPanel panel = new MainPanel();
+            //    panel.Show();
+                return true;
             }
             else
-                MessageBox.Show("Błąd logowania. Nie ma takiego użytkownika!");
-
-            //ctx.Inwestycja.Add();
-            //ctx.SaveChanges();
+            {
+               // MessageBox.Show("Błąd logowania. Nie ma takiego użytkownika!");
+                return false;
+            }
         }
     }
 }

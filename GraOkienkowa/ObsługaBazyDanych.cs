@@ -85,5 +85,26 @@ namespace Investments
             }
         }
 
+        public void DodajOperacjeUżytkownikowi(string hasło)
+        {
+            using (var ctx = new GameDbContext())
+            {
+                var User = (from user in ctx.Użytkownik
+                            where user.Hasło == hasło
+                            select user).First();
+
+                var tmp = (from inv in ctx.Inwestycja
+                            where inv.Nazwa == "PGE"
+                            select inv).First();
+
+
+                Operacja operacja = new Operacja() {Ilość = 5, Transakcja = transakcja.kupno, Inwestycja = tmp, StempelCzasowy = new DateTime(2015, 4, 4), Użytkownik = User };
+                User.Operacja.Add(operacja);
+                operacja = new Operacja() { Ilość = 100, Transakcja = transakcja.kupno, Inwestycja = tmp, StempelCzasowy = new DateTime(2015, 7, 4), Użytkownik = User };
+                User.Operacja.Add(operacja);
+                ctx.SaveChanges();
+            }
+            
+        }
     }
 }
