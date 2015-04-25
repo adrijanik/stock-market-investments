@@ -27,6 +27,7 @@ namespace Investments
             grupa = new Grupa() { Name = "Akcje" };
             grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "ENEA", Kurs = 16.43, Data = new DateTime(2000, 1, 1), Przelicznik = 1 });
             grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "PZU", Kurs = 499.80, Data = new DateTime(2010, 2, 2), Przelicznik = 1 });
+            grupa.Inwestycje.Add(new Inwestycja() { Nazwa = "PGE", Kurs = 35.00, Data = new DateTime(2015, 4, 25), Przelicznik = 1 });
             context.Grupa.Add(grupa);
 
             grupa = new Grupa() { Name = "Obligacje" };
@@ -39,10 +40,16 @@ namespace Investments
             context.Grupa.Add(grupa);          
 
             Inwestycja tmp = new Inwestycja() { Nazwa = "PGE", Kurs = 20.54, Data = new DateTime(2000, 2, 2), Przelicznik = 1, Grupa = grupa };
+            Inwestycja tmp1 = new Inwestycja() { Nazwa = "PGE", Kurs = 25.54, Data = new DateTime(2001, 2, 2), Przelicznik = 1, Grupa = grupa };
+            
             Użytkownik user = new Użytkownik() {Id = 0, Nickname ="Michał", Login="Nowak",StanKonta=1000000, Hasło="123abc" };
             context.Użytkownik.Add(user);
             Operacja operacja = new Operacja() {Id = 0, Ilość = 5, Transakcja = transakcja.kupno, Inwestycja = tmp, StempelCzasowy = new DateTime(2015,4,4), Użytkownik=user };
             context.Operacja.Add(operacja);
+            operacja = new Operacja() { Id = 0, Ilość = 15, Transakcja = transakcja.kupno, Inwestycja = tmp1, StempelCzasowy = new DateTime(2015, 4, 4), Użytkownik = user };
+            context.Operacja.Add(operacja);
+            
+
 
             context.SaveChanges();
             base.Seed(context);

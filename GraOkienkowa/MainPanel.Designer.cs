@@ -43,6 +43,7 @@
             this.historia.TabIndex = 0;
             this.historia.Text = "Historia";
             this.historia.UseVisualStyleBackColor = true;
+            this.historia.Click += new System.EventHandler(this.historia_Click);
             // 
             // Rynek
             // 
@@ -59,7 +60,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(166, 16);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(376, 238);
+            this.dataGridView1.Size = new System.Drawing.Size(897, 238);
             this.dataGridView1.TabIndex = 2;
             // 
             // portfel
@@ -76,7 +77,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(585, 292);
+            this.ClientSize = new System.Drawing.Size(1095, 292);
             this.Controls.Add(this.portfel);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.Rynek);

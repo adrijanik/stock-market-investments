@@ -76,8 +76,10 @@
     <Compile Include="ObsługaBazyDanych.cs" />
     <Compile Include="Operacja.cs" />
     <Compile Include="PobieranieDanych.cs" />
+    <Compile Include="Portfel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rekord.cs" />
     <Compile Include="Użytkownik.cs" />
     <EmbeddedResource Include="GraInwestycyjna.resx">
       <DependentUpon>GraInwestycyjna.cs</DependentUpon>
