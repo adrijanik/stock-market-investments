@@ -19,26 +19,66 @@ namespace GraInwestycyjna
     {
         string userPasswd = ConfigurationManager.AppSettings["UserPasswd"];
         public GameDbContext ctx = new GameDbContext();
+       // DataGridViewCheckBoxColumn buy = new DataGridViewCheckBoxColumn();
+        DataGridViewButtonColumn buy = new DataGridViewButtonColumn();
+        
         public MainPanel()
         {
-            InitializeComponent();  
+            
+            InitializeComponent();
+            WyswietlPortfel();
+            WyswietlRynek();
+            WyswietlHistorie();
+            
         }
 
-        private void Rynek_Click(object sender, EventArgs e)
-        {
+       public void WyswietlRynek()
+       {
             var data = ctx.Inwestycja.Select(p => p);
             try
-            { 
-            dataGridView1.DataSource = data.ToList();
+            {
+                dataGridView1.DataSource = data.ToList();
+                dataGridView1.Columns[0].Visible = false;
+                dataGridView1.Columns[5].Visible = false;
+                dataGridView1.Columns[6].Visible = false;
+                //DataGridViewButtonColumn buy = new DataGridViewButtonColumn();
+               
+                buy.Name = "Buy";
+                buy.Text = "buy";
+                buy.UseColumnTextForButtonValue = true;
+                if (dataGridView1.Columns["Buy"] == null)
+                {
+                    dataGridView1.Columns.Insert(7, buy);
                 }
+            }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd wyświetlania Rynku "+ex);
+                MessageBox.Show("Błąd wyświetlania Rynku " + ex);
             }
+       }
 
-        }
+       private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+       {
+        //   MessageBox.Show(e.ColumnIndex.ToString());
+           if (e.ColumnIndex == 0)
+           {
+              // MessageBox.Show("Row:"+(e.RowIndex + 1) + " Column: " + (e.ColumnIndex + 1) + "  Column button clicked ");
+               // kup daną inwestycję
+               Inwestycja inv = (Inwestycja)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+             //  MessageBox.Show(inv.ToString());
+               //Kup inwestycję:
+               var user = (from tmp in ctx.Użytkownik
+                           where tmp.Hasło == userPasswd
+                           select tmp).First();
+               //sprawdzić stan konta użytkownika i oświerzać wartości tabel
+               Operacja operation = new Operacja() { Transakcja = transakcja.kupno, StempelCzasowy = DateTime.Today, Ilość = 10,Inwestycja=inv };
+               user.Operacja.Add(operation);
+               MessageBox.Show("zakupiłeś inwestycje "+inv.Nazwa);
+               ctx.SaveChanges();
+           }
+       }
 
-        private void portfel_Click(object sender, EventArgs e)
+        private void WyswietlPortfel()
         {
           //  var data = ctx.Użytkownik.Select(p => p);
            
@@ -48,8 +88,8 @@ namespace GraInwestycyjna
             var user = (from tmp in ctx.Użytkownik
                         where tmp.Hasło == userPasswd
                         select tmp).First();
-            MessageBox.Show("Ilość operacji użytkownika: "+user.Operacja.Count());
-        
+           // MessageBox.Show("Ilość operacji użytkownika: "+user.Operacja.Count());
+
             foreach (var operation in user.Operacja)
             {
                 bool czyJestWPortfelu = false;
@@ -88,10 +128,10 @@ namespace GraInwestycyjna
                     // ;
                 }
             
-            dataGridView1.DataSource = Portfel.Rekords.ToList();
+            dataGridView2.DataSource = Portfel.Rekords.ToList();
         }
 
-        private void historia_Click(object sender, EventArgs e)
+        private void WyswietlHistorie()
         {
            
             using (var form = new GraInwestycyjna())
@@ -103,13 +143,25 @@ namespace GraInwestycyjna
                                 where user.Hasło == userPasswd
                                 select user).First();
 
-                    dataGridView1.DataSource = data.Operacja.ToList();
+                    dataGridView3.DataSource = data.Operacja.ToList();
+                    dataGridView3.Columns[0].Visible = false;
+                    dataGridView3.Columns[4].Visible = false;
+                    dataGridView3.Columns[5].Visible = false;
+                    dataGridView3.Columns[6].Visible = false;
+                    dataGridView3.Columns[7].Visible = false;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Błąd wyświetlania operacji w portfelu: " + ex);
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            WyswietlPortfel();
+            WyswietlRynek();
+            WyswietlHistorie();
         }
 
        
