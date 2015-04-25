@@ -30,6 +30,9 @@ namespace GraInwestycyjna
             try
             { 
             dataGridView1.DataSource = data.ToList();
+            dataGridView1.Columns[0].Visible = false;
+            dataGridView1.Columns[5].Visible = false;
+            dataGridView1.Columns[6].Visible = false;
                 }
             catch (Exception ex)
             {
@@ -48,7 +51,7 @@ namespace GraInwestycyjna
             var user = (from tmp in ctx.Użytkownik
                         where tmp.Hasło == userPasswd
                         select tmp).First();
-            MessageBox.Show("Ilość operacji użytkownika: "+user.Operacja.Count());
+           // MessageBox.Show("Ilość operacji użytkownika: "+user.Operacja.Count());
         
             foreach (var operation in user.Operacja)
             {
@@ -104,12 +107,21 @@ namespace GraInwestycyjna
                                 select user).First();
 
                     dataGridView1.DataSource = data.Operacja.ToList();
+                    dataGridView1.Columns[4].Visible = false;
+                    dataGridView1.Columns[5].Visible = false;
+                    dataGridView1.Columns[6].Visible = false;
+                    dataGridView1.Columns[7].Visible = false;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Błąd wyświetlania operacji w portfelu: " + ex);
                 }
             }
+        }
+
+        private void MainPanel_Load(object sender, EventArgs e)
+        {
+
         }
 
        

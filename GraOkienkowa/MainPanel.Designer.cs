@@ -84,6 +84,7 @@
             this.Controls.Add(this.historia);
             this.Name = "MainPanel";
             this.Text = "MainPanel";
+            this.Load += new System.EventHandler(this.MainPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
