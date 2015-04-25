@@ -14,7 +14,7 @@ namespace GraInwestycyjna
         public double KursAktualny { get; set; }
         public int Przelicznik { get; set; }
         public string Typ { get; set; } //nazwa grupy
-        public int IlośćPosiadanych {get; set;}
+        public int Liczba {get; set;}
         public double ŚredniKursKupna { get; set; }
         public int OkresInwestycji { get; set; } // dni
         public double Zysk { get; set; }
@@ -23,7 +23,15 @@ namespace GraInwestycyjna
         public Rekord(Operacja Operacja)
         {
             Nazwa = Operacja.Inwestycja.Nazwa;
-            KursAktualny = Operacja.Inwestycja.Kurs;
+            using(var ctx = new GameDbContext())
+            {
+                var aktualny = (from tmp in ctx.Inwestycja
+                                where tmp.Nazwa == Nazwa
+                                where tmp.Data == DateTime.Today
+                                select tmp).First();
+                KursAktualny = aktualny.Kurs;
+            }
+            
             Przelicznik = Operacja.Inwestycja.Przelicznik;
            using (var ctx = new GameDbContext())
            {
@@ -33,7 +41,7 @@ namespace GraInwestycyjna
                Typ = grupa.Name;
 
            }
-            IlośćPosiadanych = ((Operacja.Transakcja == transakcja.kupno) ? 1 : (-1)) * Operacja.Ilość;
+            Liczba = ((Operacja.Transakcja == transakcja.kupno) ? 1 : (-1)) * Operacja.Ilość;
             ŚredniKursKupna = Operacja.Inwestycja.Kurs;
             OkresInwestycji = Convert.ToInt32((DateTime.Today - Operacja.StempelCzasowy).TotalDays);
 
@@ -42,7 +50,7 @@ namespace GraInwestycyjna
                 var data = (from inv in ctx.Inwestycja
                             where inv.Data == DateTime.Today
                             select inv).First();
-                Zysk = (data.Kurs-Operacja.Inwestycja.Kurs) * IlośćPosiadanych;
+                Zysk = (data.Kurs-Operacja.Inwestycja.Kurs) * Liczba;
             }
 
             //TODO: Określić timing gry i poprawne odniesienia do dat!

@@ -36,6 +36,8 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.button1 = new System.Windows.Forms.Button();
+            this.stan_konta = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -59,7 +61,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Location = new System.Drawing.Point(28, 12);
+            this.tabControl1.Location = new System.Drawing.Point(27, 72);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(918, 256);
@@ -94,6 +96,7 @@
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.Size = new System.Drawing.Size(904, 224);
             this.dataGridView2.TabIndex = 0;
+            this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellClick);
             // 
             // tabPage3
             // 
@@ -123,11 +126,29 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // stan_konta
+            // 
+            this.stan_konta.Location = new System.Drawing.Point(311, 30);
+            this.stan_konta.Name = "stan_konta";
+            this.stan_konta.Size = new System.Drawing.Size(100, 20);
+            this.stan_konta.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(251, 33);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Stan konta:";
+            // 
             // MainPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(957, 340);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.stan_konta);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControl1);
             this.Name = "MainPanel";
@@ -140,6 +161,7 @@
             this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -153,5 +175,7 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.DataGridView dataGridView3;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox stan_konta;
+        private System.Windows.Forms.Label label1;
     }
 }
