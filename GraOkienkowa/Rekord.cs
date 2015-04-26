@@ -46,12 +46,12 @@ namespace GraInwestycyjna
                 }
                 Liczba = ((Operacja.Transakcja == transakcja.kupno) ? 1 : (-1)) * Operacja.Ilość;
                 ŚredniKursKupna = Operacja.Inwestycja.Kurs;
-                OkresInwestycji = Convert.ToInt32((DateTime.Today - Operacja.StempelCzasowy).TotalDays);
+                OkresInwestycji = Convert.ToInt32((CzasAktualny - Operacja.StempelCzasowy).TotalDays);
 
                 using (var ctx = new GameDbContext())
                 {
                     var data = (from inv in ctx.Inwestycja
-                                where inv.Data == DateTime.Today
+                                where inv.Data.Day == CzasAktualny.Day
                                 select inv).First();
                     Zysk = (data.Kurs - Operacja.Inwestycja.Kurs) * Liczba;
                 }
