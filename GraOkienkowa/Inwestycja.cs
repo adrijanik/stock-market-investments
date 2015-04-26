@@ -28,6 +28,12 @@ namespace Investments
         // do automatycznego zaladowania powiazanych danych.
         public virtual Grupa Grupa { get; set; }
 
+        public int? FirmaId { get; set; }
+        [ForeignKey("FirmaId")]
+        public virtual Firma Firma { get; set; }
+
+        
+
         public override string ToString()
         {
             return string.Format("St Id={0}, Name={1}, Kurs={2}, Data={3}, Przelicznik={4}, Grupa={5}", Id, Nazwa, Kurs, Data.ToString("d"), Przelicznik, Grupa.Name);

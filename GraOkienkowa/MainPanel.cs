@@ -48,6 +48,8 @@ namespace GraInwestycyjna
                 dataGridView1.Columns[0].Visible = false;
                 dataGridView1.Columns[5].Visible = false;
                 dataGridView1.Columns[6].Visible = false;
+                dataGridView1.Columns[7].Visible = false;
+                dataGridView1.Columns[8].Visible = false;
                 //DataGridViewButtonColumn buy = new DataGridViewButtonColumn();
                 
                 iloscCol_buy.HeaderText = "Ilość";
@@ -87,19 +89,26 @@ namespace GraInwestycyjna
                var user = (from tmp in ctx.Użytkownik
                            where tmp.Hasło == userPasswd
                            select tmp).First();
-               int ilość = Int32.Parse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString());
-               if (user.StanKonta < ilość*inv.Kurs)
-                   MessageBox.Show("Brak środków");
-               else
-               {
-                   Operacja operation = new Operacja() { Transakcja = transakcja.kupno, StempelCzasowy = DateTime.Today, Ilość = ilość, Inwestycja = inv };
-                   user.Operacja.Add(operation);
-                   user.StanKonta -= ilość * inv.Kurs;
-                   MessageBox.Show("zakupiłeś inwestycje " + inv.Nazwa);
-                   Odśwież();
-                   ctx.SaveChanges();
+               try
+               { 
+                   int ilość = Int32.Parse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString());
+                   if (user.StanKonta < ilość * inv.Kurs)
+                       MessageBox.Show("Brak środków");
+                   else
+                   {
+                       Operacja operation = new Operacja() { Transakcja = transakcja.kupno, StempelCzasowy = DateTime.Today, Ilość = ilość, Inwestycja = inv };
+                       user.Operacja.Add(operation);
+                       user.StanKonta -= ilość * inv.Kurs;
+                       MessageBox.Show("zakupiłeś inwestycje " + inv.Nazwa);
+                       Odśwież();
+                       ctx.SaveChanges();
+                   }
                }
-               
+               catch (Exception ex)
+               {
+                   MessageBox.Show("Uzupełnij: pole ilość");
+               }
+
            }
        }
 
@@ -249,18 +258,24 @@ namespace GraInwestycyjna
                             where tmp.Hasło == userPasswd
                             select tmp).First();
                 //MessageBox.Show(dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex-1].Value.ToString());
+                try
+                { 
                 int ilość = Int32.Parse(dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex-1].Value.ToString());
                 //if (user.Operacja < ilość * inv.Kurs) // skąd wziąć kurs? sprawdzić czy ma tyle inwestycji
                   //  MessageBox.Show("Brak środków");
-                //else
-                //{
+                
                     Operacja operation = new Operacja() { Transakcja = transakcja.sprzedaż, StempelCzasowy = DateTime.Today, Ilość = ilość, Inwestycja = inv };
                     user.Operacja.Add(operation);
                     user.StanKonta += ilość * inv.Kurs;
                     MessageBox.Show("sprzedałeś inwestycje " + inv.Nazwa);
                     Odśwież();
                     ctx.SaveChanges();
-                //}
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Uzupełnij: pole ilość");
+                }
+                
             
             }
         }

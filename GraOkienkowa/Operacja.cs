@@ -26,7 +26,7 @@ namespace Investments
 
         public override string ToString()
         {
-            return string.Format("Op Id={0}, Transakcja={1}, Ilość={2}, Inwestycja={3}", Id, transakcja.kupno.ToString(), Ilość, Inwestycja.Nazwa);
+            return string.Format("Op Id={0}, Transakcja={1}, Ilość={2}, Inwestycja={3}", Id, transakcja.kupno.ToString(), Ilość, Inwestycja.Firma);
         }
     }
 }

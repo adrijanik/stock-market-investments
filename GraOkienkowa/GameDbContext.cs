@@ -11,7 +11,7 @@ namespace Investments
     {
         // Aby podac wlasna nazwe bazy danych, nalezy wywolac konstruktor bazowy z nazwą jako parametrem.
         public GameDbContext()
-            : base("Inwestycjeee1")
+            : base("Inwestycje")
         {
             // Użyj klasy GameDbInitializer do zainicjalizowania bazy danych.
             Database.SetInitializer<GameDbContext>(new GameDbInitializer());
@@ -20,6 +20,8 @@ namespace Investments
         public DbSet<Inwestycja> Inwestycja { get; set; }
 
         public DbSet<Grupa> Grupa { get; set; }
+
+        public DbSet<Firma> Firma { get; set; }
 
         public DbSet<Operacja> Operacja { get; set; }
 
