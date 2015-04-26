@@ -25,11 +25,13 @@ namespace GraInwestycyjna
             Nazwa = Operacja.Inwestycja.Nazwa;
             using(var ctx = new GameDbContext())
             {
+                
                 var aktualny = (from tmp in ctx.Inwestycja
                                 where tmp.Nazwa == Nazwa
                                 where tmp.Data == DateTime.Today
                                 select tmp).First();
                 KursAktualny = aktualny.Kurs;
+                //KursAktualny = 10000000;
             }
             
             Przelicznik = Operacja.Inwestycja.Przelicznik;
