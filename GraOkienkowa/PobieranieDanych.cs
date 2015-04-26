@@ -19,19 +19,26 @@ namespace Investments
          //public List<Inwestycja> PobierzKursyWalut()
         public void PobierzKursyWalut()
         {
+            MessageBox.Show("Pobieram waluty");
             // List<Inwestycja> waluty = new List<Inwestycja>();
             WebClient Client = new WebClient();
             using (var ctx = new GameDbContext())
             {
                 // MessageBox.Show("Pobieramy dane z NBP!");
-
-                Client.DownloadFile("http://www.nbp.pl/kursy/xml/dir.txt", "kursy.txt");
+                try
+                {
+                    Client.DownloadFile("http://www.nbp.pl/kursy/xml/dir.txt", "kursy.txt");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Problem z pobieraniem katalogu z notowaniami walut "+ex);
+                }
                 string path = "kursy.txt";
                 StreamReader sr = File.OpenText(path);
                 string line = "";
                 char[] buffor;
                 string nazwa = "";
-
+                bool zakoncz = false;
                 while (true)
                 {
                     do  // check if first letter of line is a which means this is the right file to read from
@@ -42,28 +49,32 @@ namespace Investments
                             StringReader stream = new StringReader(line);
                             stream.Read(buffor, 0, 11);
                             nazwa = new string(buffor);
+                          //  MessageBox.Show("Nazwa: "+nazwa);
                         }
                         else
                         {
                             MessageBox.Show("Zakończono wczytywanie danych - waluty");
+                            zakoncz = true;
                             break;
                         }
-                    } while (buffor[0] != 'a');
+                    } while (!(buffor[0] == 'a' && ((buffor[5]=='1' && buffor[6]=='4') || (buffor[5]==1 && buffor[6]==5))));
                     // MessageBox.Show("before while: " + buffor[0]);
 
+                    if (zakoncz)
+                        break;
 
-                    if (nazwa == "a150z040803")
+                 /*   if (nazwa == "a150z040803")
                     {
                         MessageBox.Show("Koniec plików o poprawnej strukturze");
                         break;
-                    }
+                    }*/
 
                     string url = "http://www.nbp.pl/kursy/xml/" + nazwa + ".xml";
-                    //      MessageBox.Show(buffor.ToString());
+              //      MessageBox.Show(buffor.ToString());
 
 
                     nazwa = "dane" + nazwa + ".xml";
-                    //  MessageBox.Show(nazwa);
+                //    MessageBox.Show(nazwa);
                     try
                     {
                         Client.DownloadFile(url, nazwa);
@@ -103,40 +114,79 @@ namespace Investments
 
                     DateTime data_time = DateTime.Parse(data[0].InnerText);
 
+                //    MessageBox.Show(data_time.ToString());
 
                     try
                     {
                         XmlNodeList pozycja = xmlDoc.SelectNodes("/tabela_kursow/pozycja");
-                        //       MessageBox.Show("pobieram dane o kursach");
-
-                        var grupa = (from gr in ctx.Grupa
-                                     where gr.Name == "Waluty"
-                                     select gr).First();
-
-                        
-                        foreach (XmlNode xn in pozycja)
+                      //  MessageBox.Show("pobieram dane o kursach "+ pozycja.Count);
+                        if (pozycja.Count == 5)
                         {
+                            var grupa = (from gr in ctx.Grupa
+                                         where gr.Name == "Waluty"
+                                         select gr).First();
 
-                            XmlNodeList lista_atrybutów = xn.ChildNodes;
-                            int przelicznik = Int32.Parse(lista_atrybutów[2].InnerText);
-                            string kurs1_txt = lista_atrybutów[4].InnerText;
-                            double kurs = Convert.ToDouble(kurs1_txt);
 
-                            Inwestycja tmp = new Inwestycja { Nazwa = lista_atrybutów[3].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
-                           // waluty.Add(tmp);
-                            ctx.Inwestycja.Add(tmp);
+                            foreach (XmlNode xn in pozycja)
+                            {
+                                //  MessageBox.Show("Hello");
+                                XmlNodeList lista_atrybutów = xn.ChildNodes;
+                          //      MessageBox.Show("Ile atrybutow: " + lista_atrybutów.Count);
+                                int przelicznik = Int32.Parse(lista_atrybutów[3].InnerText);
+                          //      MessageBox.Show("Przelicznik: " + lista_atrybutów[3].InnerText);
+                                string kurs1_txt = lista_atrybutów[5].InnerText;
+                                double kurs = Convert.ToDouble(kurs1_txt);
+                           //     MessageBox.Show("Kurs " + kurs);
+                                Firma fm = new Firma() { Name = "zNeta" };
+                                Inwestycja tmp = new Inwestycja { Firma = fm, Nazwa = lista_atrybutów[4].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
+                                // waluty.Add(tmp);
+                                ctx.Firma.Add(fm);
+                                ctx.Inwestycja.Add(tmp);
 
-                            // MessageBox.Show(inv.ToString());
+                           //     MessageBox.Show(tmp.ToString());
+                            }
+                            ctx.SaveChanges();
                         }
-                        ctx.SaveChanges();
+                        else
+                        {
+                         //   MessageBox.Show("Dla 4 atrybutów");
+                            var grupa = (from gr in ctx.Grupa
+                                         where gr.Name == "Waluty"
+                                         select gr).First();
 
+
+                            foreach (XmlNode xn in pozycja)
+                            {
+                                //  MessageBox.Show("Hello");
+                                XmlNodeList lista_atrybutów = xn.ChildNodes;
+                         //       MessageBox.Show("Ile atrybutow: " + lista_atrybutów.Count);
+                                try
+                                {
+                                    int przelicznik = Int32.Parse(lista_atrybutów[1].InnerText);
+                                
+                             //   MessageBox.Show("Przelicznik: " + lista_atrybutów[1].InnerText);
+                                string kurs1_txt = lista_atrybutów[3].InnerText;
+                                double kurs = Convert.ToDouble(kurs1_txt);
+                             //   MessageBox.Show("Kurs " + kurs);
+                                Firma fm = new Firma() { Name = "zNeta" };
+                                Inwestycja tmp = new Inwestycja { Firma = fm, Nazwa = lista_atrybutów[2].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
+                                // waluty.Add(tmp);
+                                ctx.Firma.Add(fm);
+                                ctx.Inwestycja.Add(tmp);
+
+                              //  MessageBox.Show(tmp.ToString());
+                                }
+                                catch (Exception ex) { MessageBox.Show("Parsowanie przelicznika: " + ex); }
+                            }
+                            ctx.SaveChanges();
+                        }
                     }
                     catch (Exception ex)
                     {
                         // MessageBox.Show("Błąd wyłuskiwania danych o walutach " + ex);
                     }
 
-                    break; //skasuj do wczytania danych!!!
+              
                 }
                 // return waluty;
             }
@@ -162,7 +212,7 @@ namespace Investments
                     bool exception = false;
                     try
                     {
-                        data = giełda.DownloadString("http://dev.markitondemand.com/Api/v2/InteractiveChart/json?parameters=%7B%22Normalized%22%3Atrue%2C%22NumberOfDays%22%3A365%2C%22DataPeriod%22%3A%22Day%22%2C%22Elements%22%3A%5B%7B%22Symbol%22%3A%22" + nazwa + "%22%2C%22Type%22%3A%22price%22%2C%22Params%22%3A%5B%22c%22%5D%7D%5D%7D");
+                        data = giełda.DownloadString("http://dev.markitondemand.com/Api/v2/InteractiveChart/json?parameters=%7B%22Normalized%22%3Atrue%2C%22NumberOfDays%22%3A545%2C%22DataPeriod%22%3A%22Day%22%2C%22Elements%22%3A%5B%7B%22Symbol%22%3A%22" + nazwa + "%22%2C%22Type%22%3A%22price%22%2C%22Params%22%3A%5B%22c%22%5D%7D%5D%7D");
                     }catch (Exception ex)
                     {
                         exception = true;

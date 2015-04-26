@@ -38,6 +38,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.stan_konta = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.czas_aktualny = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -46,6 +48,7 @@
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.SuspendLayout();
+            
             // 
             // dataGridView1
             // 
@@ -142,11 +145,29 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "Stan konta:";
             // 
+            // czas_aktualny
+            // 
+            this.czas_aktualny.Location = new System.Drawing.Point(575, 30);
+            this.czas_aktualny.Name = "czas_aktualny";
+            this.czas_aktualny.Size = new System.Drawing.Size(181, 20);
+            this.czas_aktualny.TabIndex = 8;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(497, 33);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "aktualny czas";
+            // 
             // MainPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(957, 340);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.czas_aktualny);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.stan_konta);
             this.Controls.Add(this.button1);
@@ -177,5 +198,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox stan_konta;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox czas_aktualny;
+        private System.Windows.Forms.Label label2;
     }
 }

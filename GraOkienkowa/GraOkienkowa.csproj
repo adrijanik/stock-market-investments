@@ -81,6 +81,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rekord.cs" />
+    <Compile Include="Time.cs" />
     <Compile Include="Użytkownik.cs" />
     <EmbeddedResource Include="GraInwestycyjna.resx">
       <DependentUpon>GraInwestycyjna.cs</DependentUpon>

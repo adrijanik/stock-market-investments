@@ -12,11 +12,13 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Investments;
 using System.Configuration;
+//using System.Timers;
 
 namespace GraInwestycyjna
 {
     public partial class MainPanel : Form
     {
+        
         string userPasswd = ConfigurationManager.AppSettings["UserPasswd"];
         public GameDbContext ctx = new GameDbContext();
        // DataGridViewCheckBoxColumn buy = new DataGridViewCheckBoxColumn();
@@ -26,12 +28,22 @@ namespace GraInwestycyjna
         DataGridViewCell cell_buy = new DataGridViewTextBoxCell();
         DataGridViewColumn iloscCol_sell = new DataGridViewColumn(); // add a column to the grid
         DataGridViewCell cell_sell = new DataGridViewTextBoxCell();
-        
-        
+        DateTime StartTime;
+
         public MainPanel()
         {
+
+
+
+            StartTime = DateTime.Now;
+            var timer = new Timer();
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Interval =10* 1000; //1 seconds *10
+            timer.Start();
             
+             
             InitializeComponent();
+            czas_aktualny.Text =Convert.ToString(new DateTime(2014, 1, 1));
             WyswietlPortfel();
             WyswietlRynek();
             WyswietlHistorie();
@@ -78,7 +90,7 @@ namespace GraInwestycyjna
 
        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
        {
-        //   MessageBox.Show(e.ColumnIndex.ToString());
+         //  MessageBox.Show(e.ColumnIndex.ToString());
            if (e.ColumnIndex == 0)
            {
               // MessageBox.Show("Row:"+(e.RowIndex + 1) + " Column: " + (e.ColumnIndex + 1) + "  Column button clicked ");
@@ -106,7 +118,7 @@ namespace GraInwestycyjna
                }
                catch (Exception ex)
                {
-                   MessageBox.Show("Uzupełnij: pole ilość");
+                   MessageBox.Show("Uzupełnij: pole ilość" + ex);
                }
 
            }
@@ -149,7 +161,7 @@ namespace GraInwestycyjna
                         }
                     if (!czyJestWPortfelu)
                     {
-                        Rekord rekord = new Rekord(operation);
+                        Rekord rekord = new Rekord(operation, Convert.ToDateTime(czas_aktualny.Text));
                         Portfel.Rekords.Add(rekord);
                     }
 
@@ -187,10 +199,6 @@ namespace GraInwestycyjna
 
         private void WyswietlHistorie()
         {
-           
-            using (var form = new GraInwestycyjna())
-            {
-
                 try
                 {
                     var data = (from user in ctx.Użytkownik
@@ -210,7 +218,7 @@ namespace GraInwestycyjna
                     MessageBox.Show("Błąd wyświetlania operacji w portfelu: " + ex);
                 }
             }
-        }
+        
 
 
         private void WyswietlStanKonta()
@@ -230,9 +238,11 @@ namespace GraInwestycyjna
         private void Odśwież()
         {
             WyswietlPortfel();
-            //      WyswietlRynek(); 
+      //      WyswietlRynek(); 
             WyswietlHistorie();
             WyswietlStanKonta();
+    //        if (TimerExample.DateList.Count()!=0)
+      //          czas_aktualny.Text = TimerExample.DateList[TimerExample.DateList.Count()-1].ToString();
 
             /* Wyświetl rynek odkomentowane bo przy odświeżaniu znikają kolumny - o co chodzi?*/
         }
@@ -278,6 +288,22 @@ namespace GraInwestycyjna
                 
             
             }
+        } //cell_click event
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+           
+           var GameTime = new DateTime(2014, 1, 1);
+            TimeSpan duration = DateTime.Now - StartTime;
+            long ticks = duration.Ticks;
+            ticks *= (24*60*6);
+            GameTime += TimeSpan.FromTicks(ticks); 
+            czas_aktualny.Text =GameTime.ToString() ;
+          //  czas_aktualny.Text =DateTime.Now.ToString();
+
+
+
         }
-    }
-}
+
+    } //MainPanel
+} //GraInwestycyjna namespace

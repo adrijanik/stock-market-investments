@@ -51,7 +51,7 @@ namespace Investments
             context.Grupa.Add(grupa);
 
             Inwestycja tmp = new Inwestycja() { Firma = firma, Nazwa = firma.Name, Kurs = 20.54, Data = new DateTime(2000, 2, 2), Przelicznik = 1, Grupa = grupa };
-            Inwestycja tmp1 = new Inwestycja() { Firma = firma, Nazwa = firma.Name, Kurs = 25.54, Data = new DateTime(2001, 2, 2), Przelicznik = 1, Grupa = grupa };
+            Inwestycja tmp1 = new Inwestycja() { Firma = firma, Nazwa = firma.Name, Kurs = 25.54, Data = new DateTime(2015, 4, 26), Przelicznik = 1, Grupa = grupa };
             
             Użytkownik user = new Użytkownik() {Id = 0, Nickname ="Michał", Login="Nowak",StanKonta=1000000, Hasło="123abc" };
             context.Użytkownik.Add(user);

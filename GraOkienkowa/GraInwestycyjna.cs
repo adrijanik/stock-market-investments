@@ -26,8 +26,8 @@ namespace GraInwestycyjna
             hasło_txt.MaxLength = 8;
 
 
-         //   service.PobieranieDanychAkcje();
-         //   service.PobieranieDanychWaluty();
+          //  service.PobieranieDanychAkcje();
+          //  service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
 
          //   service.DodajPrzykladowoInwestycje();
          //   service.WypiszInwestycje();
