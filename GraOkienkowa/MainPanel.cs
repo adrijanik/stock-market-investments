@@ -41,10 +41,10 @@ namespace GraInwestycyjna
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval =10* 1000; //1 seconds *10
             timer.Start();
-            
-             
+
+           
             InitializeComponent();
-            czas_aktualny.Text =Convert.ToString(new DateTime(2014, 1, 1));
+            czas_aktualny.Text =Convert.ToString(new DateTime(2014, 1, 2));
             WyswietlPortfel();
             WyswietlRynek();
             WyswietlHistorie();
@@ -94,34 +94,40 @@ namespace GraInwestycyjna
          //  MessageBox.Show(e.ColumnIndex.ToString());
            if (e.ColumnIndex == 0)
            {
-              // MessageBox.Show("Row:"+(e.RowIndex + 1) + " Column: " + (e.ColumnIndex + 1) + "  Column button clicked ");
-               // kup daną inwestycję
-               Inwestycja inv = (Inwestycja)dataGridView1.Rows[e.RowIndex].DataBoundItem;
-             //  MessageBox.Show(inv.ToString());
-               //Kup inwestycję:
-               var user = (from tmp in ctx.Użytkownik
-                           where tmp.Hasło == userPasswd
-                           select tmp).First();
-               try
-               { 
-                   int ilość = Int32.Parse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString());
-                   if (user.StanKonta < ilość * inv.Kurs)
-                       MessageBox.Show("Brak środków");
-                   else
-                   {
-                       Operacja operation = new Operacja() { Transakcja = transakcja.kupno, StempelCzasowy = Convert.ToDateTime(czas_aktualny.Text), Ilość = ilość, Inwestycja = inv };
-                       user.Operacja.Add(operation);
-                       user.StanKonta -= ilość * inv.Kurs* inv.Przelicznik;
-                       MessageBox.Show("zakupiłeś inwestycje " + inv.Nazwa);
-                       Odśwież();
-                       ctx.SaveChanges();
-                   }
-               }
-               catch (Exception ex)
-               {
-                   MessageBox.Show("Uzupełnij: pole ilość" + ex);
-               }
+              
+               
+                DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
+                if (!data_aktualna.IsHoliday())
+                {
+                    // MessageBox.Show("Row:"+(e.RowIndex + 1) + " Column: " + (e.ColumnIndex + 1) + "  Column button clicked ");
+                    // kup daną inwestycję
+                    Inwestycja inv = (Inwestycja)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+                    //  MessageBox.Show(inv.ToString());
+                    //Kup inwestycję:
+                    var user = (from tmp in ctx.Użytkownik
+                                where tmp.Hasło == userPasswd
+                                select tmp).First();
+                    try
+                    {
+                        int ilość = Int32.Parse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString());
+                        if (user.StanKonta < ilość * inv.Kurs)
+                            MessageBox.Show("Brak środków");
+                        else
+                        {
 
+                            Operacja operation = new Operacja() { Transakcja = transakcja.kupno, StempelCzasowy = Convert.ToDateTime(czas_aktualny.Text), Ilość = ilość, Inwestycja = inv };
+                            user.Operacja.Add(operation);
+                            user.StanKonta -= ilość * inv.Kurs * inv.Przelicznik;
+                            MessageBox.Show("zakupiłeś inwestycje " + inv.Nazwa);
+                            Odśwież();
+                            ctx.SaveChanges();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Uzupełnij: pole ilość" + ex);
+                    }
+                }
            }
        }
 
@@ -153,11 +159,17 @@ namespace GraInwestycyjna
                                 rekord.Liczba += ((operation.Transakcja == transakcja.kupno) ? 1 : (-1)) * operation.Ilość;
                                 rekord.ŚredniKursKupna += ((operation.Transakcja == transakcja.kupno) ? operation.Inwestycja.Kurs / rekord.Liczba : 0);
                                 rekord.OkresInwestycji = (rekord.OkresInwestycji > Convert.ToInt32((Convert.ToDateTime(czas_aktualny.Text) - operation.StempelCzasowy).TotalDays)) ? rekord.OkresInwestycji : Convert.ToInt32((Convert.ToDateTime(czas_aktualny.Text) - operation.StempelCzasowy).TotalDays);
-                               
-                                var data = (from inv in ctx.Inwestycja
-                                            where inv.Data.Day == data_aktualna.Day
-                                            select inv).First();
-
+                                Inwestycja data;
+                                try
+                                {
+                                    data = (from inv in ctx.Inwestycja
+                                                where inv.Data.Day == data_aktualna.Day
+                                                select inv).First();
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw;
+                                }
                                 rekord.Zysk = (data.Kurs - operation.Inwestycja.Kurs) * rekord.Liczba;
                                 Portfel.OperacjeDodane.Add(operation);
                             }
@@ -229,7 +241,6 @@ namespace GraInwestycyjna
             }
         
 
-
         private void WyswietlStanKonta()
         {
              var user = (from tmp in ctx.Użytkownik
@@ -246,8 +257,15 @@ namespace GraInwestycyjna
 
         private void Odśwież()
         {
-            WyswietlPortfel();
-      //      WyswietlRynek(); 
+            try
+            {
+                WyswietlPortfel();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Brak odpowiednich danych w bazie, nie można skonstruować portfela " + ex);
+            }
+       //     WyswietlRynek(); 
             WyswietlHistorie();
             WyswietlStanKonta();
     //        if (TimerExample.DateList.Count()!=0)
@@ -268,7 +286,7 @@ namespace GraInwestycyjna
                 //  MessageBox.Show(inv.ToString());
                 //Kup inwestycję:
                 DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
-                if (data_aktualna.DayOfWeek != DayOfWeek.Saturday && data_aktualna.DayOfWeek != DayOfWeek.Sunday)
+                if (!data_aktualna.IsHoliday())
                 {
                     string nazwa = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString();
                     var inv = (from tmp1 in ctx.Inwestycja
@@ -319,43 +337,79 @@ namespace GraInwestycyjna
             TimeSpan duration = DateTime.Now - StartTime;
             long ticks = duration.Ticks;
             ticks *= (24*60*6);
-            GameTime += TimeSpan.FromTicks(ticks); 
-            czas_aktualny.Text =GameTime.ToString() ;
+            GameTime += TimeSpan.FromTicks(ticks);
+            if (GameTime <= new DateTime(2014, 1, 16))
+            {
+                czas_aktualny.Text = GameTime.ToString();
+                OdświeżPortfel();
+                OdświeżFirmy();
+                Odśwież();
+            }
+           
+                if (GameTime == new DateTime(2014, 1, 16))
+                    MessageBox.Show("Ostatni dzień - wszystko działa");
+
           //  czas_aktualny.Text =DateTime.Now.ToString();
-            OdświeżPortfel();
-            Odśwież();
-        }
+         }
 
         void OdświeżPortfel()
         {
-            try { 
-            DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
-            if (data_aktualna.DayOfWeek != DayOfWeek.Saturday && data_aktualna.DayOfWeek != DayOfWeek.Sunday)
+
+            try 
             {
-               // MessageBox.Show("Kalkuluje");
-                foreach (var rekord in Portfel.Rekords)
+                DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
+                if (!data_aktualna.IsHoliday())
                 {
-                    var inv = (from tmp in ctx.Inwestycja
-                               where tmp.Nazwa == rekord.Nazwa
-                               where tmp.Data.Day == data_aktualna.Day
-                               select tmp).First();
+                    // MessageBox.Show("Kalkuluje");
+                    foreach (var rekord in Portfel.Rekords)
+                    {
+                        var inv = (from tmp in ctx.Inwestycja
+                                   where tmp.Nazwa == rekord.Nazwa
+                                   where tmp.Data.Day == data_aktualna.Day
+                                   select tmp).First();
 
-                    rekord.KursAktualny = inv.Kurs;
-                    rekord.OkresInwestycji++;
+                        rekord.KursAktualny = inv.Kurs;
+                        rekord.OkresInwestycji++;
 
-                    Portfel.OperacjeDodane.OrderBy(o => o.StempelCzasowy).ToList();
-                    MessageBox.Show(Portfel.OperacjeDodane[0].ToString());
-                    rekord.Zysk = (inv.Kurs - Portfel.OperacjeDodane[0].Inwestycja.Kurs) * rekord.Liczba;
+                        Portfel.OperacjeDodane.OrderBy(o => o.StempelCzasowy).ToList();
+                        //  MessageBox.Show(Portfel.OperacjeDodane[0].ToString());
+                        rekord.Zysk = (inv.Kurs - Portfel.OperacjeDodane[0].Inwestycja.Kurs) * rekord.Liczba;
+                    }
                 }
             }
-                }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd aktualizacji portfela "+ex);
             }
+        }//Odśwież portfel
+
+        void OdświeżFirmy()
+        {
+            DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
+            
+            foreach(var fm in ctx.Firma)
+            {
+                if (fm.Name == "Przykład")
+                {
+                    ;
+                }
+                else
+                {
+                    if (!data_aktualna.IsHoliday())
+                    {
+                        var inv = (from tmp in fm.Archiwum
+                                   where tmp.Nazwa == fm.Name
+                                   where tmp.Data.Day == data_aktualna.Day
+                                   select tmp).First();
+
+                        fm.AktualnaInwestycja = inv;
+                    }
+                }
+
+            }
         }
 
-
+        
 
     } //MainPanel
 } //GraInwestycyjna namespace

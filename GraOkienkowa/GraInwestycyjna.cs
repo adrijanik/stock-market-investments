@@ -25,14 +25,53 @@ namespace GraInwestycyjna
             hasło_txt.PasswordChar='*';
             hasło_txt.MaxLength = 8;
 
+         /*   foreach (var op in ctx.Operacja)
+                ctx.Operacja.Remove(op);
 
+            foreach (var user in ctx.Użytkownik)
+            {
+                if (user.Login == "adri")
+                    ctx.Użytkownik.Remove(user);
+            }
+            ctx.SaveChanges();
+            
+*/
+         //   StwórzFirmy();
+         
+        
+         //  UsunNiepotrzebne_Sprzatacz();
+         //  StwórzWaluty();
+        
+            
           //  service.PobieranieDanychAkcje();
-          //  service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
-
+        //    service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
+   
          //   service.DodajPrzykladowoInwestycje();
          //   service.WypiszInwestycje();
 
          //   MessageBox.Show("Done!");
+        }
+
+    
+        void UsunNiepotrzebne_Sprzatacz()
+        {
+            foreach (var inv in ctx.Inwestycja)
+            {
+                if (inv.Nazwa == "Przykład")
+                    ctx.Inwestycja.Remove(inv);
+            }
+            foreach(var user in ctx.Użytkownik)
+            {
+                if (user.Login == "Nowak" )
+                    ctx.Użytkownik.Remove(user);
+            }
+            foreach (var fm in ctx.Firma)
+            {
+                if (fm.Name == "Przykład")
+                    ctx.Firma.Remove(fm);
+            }
+
+            ctx.SaveChanges();
         }
 
         private void login_txt_TextChanged(object sender, EventArgs e)
@@ -126,5 +165,35 @@ namespace GraInwestycyjna
             configFile.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection("appSettings");
         }
+
+
+        
+        void StwórzFirmy()
+        {
+            string line;
+            System.IO.StreamReader file =
+            new System.IO.StreamReader(@"C:\Users\Adri\Desktop\Bats_Stocks.txt");
+            while ((line = file.ReadLine()) != null)
+            {
+                string nazwa = line;
+                Firma fm = new Firma() { Name = nazwa };
+                ctx.Firma.Add(fm);
+            }
+
+        }
+        void StwórzWaluty()
+        {
+            string line;
+            System.IO.StreamReader file =
+            new System.IO.StreamReader(@"C:\Users\Adri\Desktop\waluty.txt");
+            while ((line = file.ReadLine()) != null)
+            {
+                string nazwa = line;
+                Firma fm = new Firma() { Name = nazwa };
+                ctx.Firma.Add(fm);
+            }
+            ctx.SaveChanges();
+        }
+
     }
 }

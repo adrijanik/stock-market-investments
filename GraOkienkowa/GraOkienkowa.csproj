@@ -67,6 +67,7 @@
     <Compile Include="GameDbContext.cs" />
     <Compile Include="GameDbInitializer.cs" />
     <Compile Include="Grupa.cs" />
+    <Compile Include="HolidayCalculator.cs" />
     <Compile Include="Inwestycja.cs" />
     <Compile Include="MainPanel.cs">
       <SubType>Form</SubType>

@@ -39,8 +39,10 @@ namespace Investments
                 char[] buffor;
                 string nazwa = "";
                 bool zakoncz = false;
+                int counter = 0;
                 while (true)
                 {
+
                     do  // check if first letter of line is a which means this is the right file to read from
                     {
                         if ((line = sr.ReadLine()) != null)
@@ -60,6 +62,10 @@ namespace Investments
                     } while (!(buffor[0] == 'a' && ((buffor[5]=='1' && buffor[6]=='4') || (buffor[5]==1 && buffor[6]==5))));
                     // MessageBox.Show("before while: " + buffor[0]);
 
+
+                    counter++;
+                    if (counter > 10)
+                        break;// -> warunek by zakończyć wczytywanie po 10 plikach
                     if (zakoncz)
                         break;
 
@@ -115,6 +121,19 @@ namespace Investments
                     DateTime data_time = DateTime.Parse(data[0].InnerText);
 
                 //    MessageBox.Show(data_time.ToString());
+                    Grupa grupa;
+                    bool jestGrupaWaluty=false;
+                    foreach (var tmp in ctx.Grupa)
+                    {
+                        if (tmp.Name == "Waluty")
+                            jestGrupaWaluty = true;
+                    }
+                    if (!jestGrupaWaluty)
+                    {
+                        grupa = new Grupa() { Name = "Waluty" };
+                        ctx.Grupa.Add(grupa);
+                        ctx.SaveChanges();
+                    }
 
                     try
                     {
@@ -122,7 +141,7 @@ namespace Investments
                       //  MessageBox.Show("pobieram dane o kursach "+ pozycja.Count);
                         if (pozycja.Count == 5)
                         {
-                            var grupa = (from gr in ctx.Grupa
+                                grupa = (from gr in ctx.Grupa
                                          where gr.Name == "Waluty"
                                          select gr).First();
 
@@ -137,11 +156,24 @@ namespace Investments
                                 string kurs1_txt = lista_atrybutów[5].InnerText;
                                 double kurs = Convert.ToDouble(kurs1_txt);
                            //     MessageBox.Show("Kurs " + kurs);
-                                Firma fm = new Firma() { Name = "zNeta" };
-                                Inwestycja tmp = new Inwestycja { Firma = fm, Nazwa = lista_atrybutów[4].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
-                                // waluty.Add(tmp);
-                                ctx.Firma.Add(fm);
-                                ctx.Inwestycja.Add(tmp);
+
+                                string nazwa_dodawanej_firmy = lista_atrybutów[4].InnerText;
+                                var fm = (from tmp in ctx.Firma
+                                         where tmp.Name == nazwa_dodawanej_firmy
+                                         select tmp).First();
+
+                                if (!fm.Archiwum.Exists(item => item.Data == data_time))
+                                {
+
+                                    fm.Archiwum.Add(new Inwestycja { Nazwa = nazwa_dodawanej_firmy, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa });
+                                }
+                                        
+                                    
+                                
+                               
+                                                                // waluty.Add(tmp);
+                               // ctx.Firma.Add(fm);
+                               // ctx.Inwestycja.Add(tmp);
 
                            //     MessageBox.Show(tmp.ToString());
                             }
@@ -150,7 +182,7 @@ namespace Investments
                         else
                         {
                          //   MessageBox.Show("Dla 4 atrybutów");
-                            var grupa = (from gr in ctx.Grupa
+                                 grupa = (from gr in ctx.Grupa
                                          where gr.Name == "Waluty"
                                          select gr).First();
 
@@ -167,12 +199,25 @@ namespace Investments
                              //   MessageBox.Show("Przelicznik: " + lista_atrybutów[1].InnerText);
                                 string kurs1_txt = lista_atrybutów[3].InnerText;
                                 double kurs = Convert.ToDouble(kurs1_txt);
-                             //   MessageBox.Show("Kurs " + kurs);
-                                Firma fm = new Firma() { Name = "zNeta" };
-                                Inwestycja tmp = new Inwestycja { Firma = fm, Nazwa = lista_atrybutów[2].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
+                            //   MessageBox.Show("Kurs " + kurs);
+                                    string nazwa_dodawanej_firmy = lista_atrybutów[2].InnerText;
+                                var fm = (from tmp in ctx.Firma
+                                          where tmp.Name == nazwa_dodawanej_firmy
+                                          select tmp).First();
+
+                               
+
+                                if (!fm.Archiwum.Exists(item => item.Data == data_time))
+                                {
+                                    fm.Archiwum.Add(new Inwestycja { Nazwa = nazwa_dodawanej_firmy, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa });
+                                }
+
+
+                              //  Firma fm = new Firma() { Name = "zNeta" };
+                               // Inwestycja tmp = new Inwestycja { Firma = fm, Nazwa = lista_atrybutów[2].InnerText, Kurs = kurs, Przelicznik = przelicznik, Data = data_time, Grupa = grupa };
                                 // waluty.Add(tmp);
-                                ctx.Firma.Add(fm);
-                                ctx.Inwestycja.Add(tmp);
+                            //    ctx.Firma.Add(fm);
+                           //     ctx.Inwestycja.Add(tmp);
 
                               //  MessageBox.Show(tmp.ToString());
                                 }
@@ -183,7 +228,7 @@ namespace Investments
                     }
                     catch (Exception ex)
                     {
-                        // MessageBox.Show("Błąd wyłuskiwania danych o walutach " + ex);
+                         MessageBox.Show("Błąd wyłuskiwania danych o walutach " + ex);
                     }
 
               
