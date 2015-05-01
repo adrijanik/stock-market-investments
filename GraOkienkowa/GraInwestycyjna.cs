@@ -39,12 +39,12 @@ namespace GraInwestycyjna
          //   StwórzFirmy();
          
         
-         //  UsunNiepotrzebne_Sprzatacz();
-         //  StwórzWaluty();
+       //     UsunNiepotrzebne_Sprzatacz();
+       //     StwórzWaluty();
         
             
           //  service.PobieranieDanychAkcje();
-        //    service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
+       //     service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
    
          //   service.DodajPrzykladowoInwestycje();
          //   service.WypiszInwestycje();
@@ -185,12 +185,16 @@ namespace GraInwestycyjna
         {
             string line;
             System.IO.StreamReader file =
-            new System.IO.StreamReader(@"C:\Users\Adri\Desktop\waluty.txt");
+                new System.IO.StreamReader(@"C:\Users\Adri\Desktop\waluty.txt");
+         //   Inwestycja init = new Inwestycja { Nazwa = "init", Data = DateTime.Now, Kurs = 0 };
             while ((line = file.ReadLine()) != null)
             {
                 string nazwa = line;
-                Firma fm = new Firma() { Name = nazwa };
-                ctx.Firma.Add(fm);
+                if (!ctx.Firma.Any(p => p.Name == nazwa))
+                {
+                    Firma fm = new Firma() { Name = nazwa }; //, AktualnaInwestycja=init };
+                    ctx.Firma.Add(fm);
+                }
             }
             ctx.SaveChanges();
         }

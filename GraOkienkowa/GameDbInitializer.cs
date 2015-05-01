@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Investments
 {
@@ -24,10 +25,16 @@ namespace Investments
         {
             Grupa grupa;
             Firma firma;
-
+         
             grupa = new Grupa() { Name = "Akcje" };
-            firma = new Firma() { Name = "Przykład" };
-            grupa.Inwestycje.Add(new Inwestycja() { Firma = firma, Nazwa = firma.Name, Kurs = 12.43, Data = new DateTime(2015, 4, 26), Przelicznik = 1 });
+        //    Inwestycja inw = new Inwestycja() { Nazwa = "", Kurs = 12.43, Data = new DateTime(2015, 4, 26), Przelicznik = 1 };
+       //     firma = new Firma() { Name = "Przykład", AktualnaInwestycja = inw };
+       //     grupa.Inwestycje.Add(inw);
+
+       
+             
+             firma = new Firma() { Name = "Przykład" };
+             grupa.Inwestycje.Add(new Inwestycja() {Firma=firma, Nazwa = firma.Name, Kurs = 12.43, Data = new DateTime(2015, 4, 26), Przelicznik = 1 });
             context.Grupa.Add(grupa);
 
             Inwestycja tmp1 = new Inwestycja() { Firma = firma, Nazwa = firma.Name, Kurs = 25.54, Data = new DateTime(2015, 4, 26), Przelicznik = 1, Grupa = grupa };
@@ -35,8 +42,12 @@ namespace Investments
             context.Użytkownik.Add(user);
             Operacja operacja = new Operacja() {Id = 0, Ilość = 5, Transakcja = transakcja.kupno, Inwestycja = tmp1, StempelCzasowy = new DateTime(2015,4,4), Użytkownik=user };
             context.Operacja.Add(operacja);
-
-            context.SaveChanges();
+            try
+            { context.SaveChanges(); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd inicjalizacji bazy "+ex);
+            }
             base.Seed(context);
         }
     }

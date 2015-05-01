@@ -10,12 +10,13 @@ namespace Investments
         {
             public int Id { get; set; }
             public string Name { get; set; }
-            public Inwestycja AktualnaInwestycja; 
+            public Inwestycja AktualnaInwestycja;// { get; set; }  
 
 
             public Firma()
             {
                 Archiwum = new List<Inwestycja>();
+                AktualnaInwestycja = new Inwestycja();
 
             }
 

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -29,6 +30,7 @@ namespace GraInwestycyjna
         DataGridViewCell cell_buy = new DataGridViewTextBoxCell();
         DataGridViewColumn iloscCol_sell = new DataGridViewColumn(); // add a column to the grid
         DataGridViewCell cell_sell = new DataGridViewTextBoxCell();
+        List<Inwestycja> dzisiejsze_inwestycje = new List<Inwestycja>();
         DateTime StartTime;
 
         public MainPanel()
@@ -46,12 +48,15 @@ namespace GraInwestycyjna
             InitializeComponent();
             czas_aktualny.Text =Convert.ToString(new DateTime(2014, 1, 2));
             WyswietlPortfel();
+            WyswietlFirmy();
+            OdświeżFirmy();
             WyswietlRynek();
+            WyswietlDobra();
             WyswietlHistorie();
             WyswietlStanKonta();
         }
 
-       public void WyswietlRynek()
+       public void WyswietlDobra()
        {
             var data = ctx.Inwestycja.Select(p => p);
             try
@@ -65,7 +70,7 @@ namespace GraInwestycyjna
                 dataGridView1.Columns[8].Visible = false;
                 //DataGridViewButtonColumn buy = new DataGridViewButtonColumn();
                 
-                iloscCol_buy.HeaderText = "Ilość";
+    /*            iloscCol_buy.HeaderText = "Ilość";
                 iloscCol_buy.Name = "ilość";
                 iloscCol_buy.Visible = true;
                 iloscCol_buy.Width = 40;
@@ -80,7 +85,7 @@ namespace GraInwestycyjna
                 if (dataGridView1.Columns["Buy"] == null)
                 {
                     dataGridView1.Columns.Insert(7, buy);
-                }
+                }*/
                 
             }
             catch (Exception ex)
@@ -89,10 +94,10 @@ namespace GraInwestycyjna
             }
        }
 
-       private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+       private void dataGridView4_CellClick(object sender, DataGridViewCellEventArgs e)
        {
          //  MessageBox.Show(e.ColumnIndex.ToString());
-           if (e.ColumnIndex == 0)
+           if (e.ColumnIndex == dataGridView4.Columns["Buy"].Index)
            {
               
                
@@ -101,7 +106,7 @@ namespace GraInwestycyjna
                 {
                     // MessageBox.Show("Row:"+(e.RowIndex + 1) + " Column: " + (e.ColumnIndex + 1) + "  Column button clicked ");
                     // kup daną inwestycję
-                    Inwestycja inv = (Inwestycja)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+                    Inwestycja inv = (Inwestycja)dataGridView4.Rows[e.RowIndex].DataBoundItem;
                     //  MessageBox.Show(inv.ToString());
                     //Kup inwestycję:
                     var user = (from tmp in ctx.Użytkownik
@@ -109,7 +114,7 @@ namespace GraInwestycyjna
                                 select tmp).First();
                     try
                     {
-                        int ilość = Int32.Parse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString());
+                        int ilość = Int32.Parse(dataGridView4.Rows[e.RowIndex].Cells[dataGridView4.Columns["ilość"].Index].Value.ToString());
                         if (user.StanKonta < ilość * inv.Kurs)
                             MessageBox.Show("Brak środków");
                         else
@@ -205,15 +210,14 @@ namespace GraInwestycyjna
             sell.Name = "Sell";
             sell.Text = "sell";
             sell.UseColumnTextForButtonValue = true;
-            if (dataGridView2.Columns["Ilość"] == null)
+            if (dataGridView2.Columns["ilość"] == null)
                 dataGridView2.Columns.Add(iloscCol_sell);
-            if (dataGridView2.Columns["Sell"] == null)
-            {
-                dataGridView2.Columns.Insert(9, sell);
-            }
 
-            dataGridView2.Columns[5].DefaultCellStyle.Format = "n2";
-            dataGridView2.Columns[7].DefaultCellStyle.Format = "n2";
+            if (dataGridView2.Columns["sell"] == null)
+                dataGridView2.Columns.Add(sell);
+            
+            dataGridView2.Columns["ŚredniKursKupna"].DefaultCellStyle.Format = "n2";
+            dataGridView2.Columns["Zysk"].DefaultCellStyle.Format = "n2";
         }
 
         private void WyswietlHistorie()
@@ -226,13 +230,11 @@ namespace GraInwestycyjna
 
                     dataGridView3.DataSource = data.Operacja.ToList();
                     dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-                  //  dataGridView3.Columns[3].DefaultCellStyle.Format = "n2";
-                   // dataGridView3.Columns[2].DefaultCellStyle.Format = "n2";
-                    dataGridView3.Columns[0].Visible = false;
-                    dataGridView3.Columns[4].Visible = false;
-                    dataGridView3.Columns[5].Visible = false;
-                    dataGridView3.Columns[6].Visible = false;
-                    dataGridView3.Columns[7].Visible = false;
+                    dataGridView3.Columns["Id"].Visible = false;
+                    dataGridView3.Columns["InwestycjaId"].Visible = false;
+                    dataGridView3.Columns["UżytkownikId"].Visible = false;
+                    dataGridView3.Columns["Użytkownik"].Visible = false;
+                    dataGridView3.Columns["Inwestycja"].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -250,6 +252,71 @@ namespace GraInwestycyjna
             
         }
 
+
+        public void WyswietlRynek()
+        {
+            DateTime data_aktualna = Convert.ToDateTime(czas_aktualny.Text);
+            if (!data_aktualna.IsHoliday())
+            {
+                dzisiejsze_inwestycje.Clear();
+               // dzisiejsze_inwestycje = ctx.Inwestycja.Where(c => c.Data == data_aktualna).ToList();
+                foreach (var fm in ctx.Firma)
+                {
+                    dzisiejsze_inwestycje.Add(fm.AktualnaInwestycja);
+                }
+
+                try
+                {
+                    dataGridView4.DataSource = dzisiejsze_inwestycje.ToList();
+                    dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                    dataGridView4.Columns["Id"].Visible = false;
+                    dataGridView4.Columns["GrupaId"].Visible = false;
+                    dataGridView4.Columns["Grupa"].Visible = false;
+                    dataGridView4.Columns["FirmaId"].Visible = false;
+                    dataGridView4.Columns["Firma"].Visible = false;
+                    dataGridView4.Columns["Data"].Visible = false;
+
+
+                    iloscCol_buy.HeaderText = "Ilość";
+                    iloscCol_buy.Name = "ilość";
+                    iloscCol_buy.Visible = true;
+                    iloscCol_buy.Width = 40;
+                    iloscCol_buy.CellTemplate = cell_buy;
+
+
+                    buy.Name = "Buy";
+                    buy.Text = "buy";
+                    buy.UseColumnTextForButtonValue = true;
+                    if (dataGridView4.Columns["ilość"] == null)
+                        dataGridView4.Columns.Add(iloscCol_buy);
+                    if (dataGridView4.Columns["Buy"] == null)
+                    {
+                        dataGridView4.Columns.Add(buy);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd wyświetlania Rynku " + ex);
+                }
+            }
+        }
+
+        public void OdświeżRynek()
+        {
+            DateTime data_aktualna = Convert.ToDateTime(czas_aktualny.Text);
+        /*    dzisiejsze_inwestycje.Clear();
+            foreach (var fm in ctx.Firma)
+            {
+                dzisiejsze_inwestycje.Add(fm.AktualnaInwestycja);
+            }
+            dataGridView4.DataSource = dzisiejsze_inwestycje;*/
+            if (!data_aktualna.IsHoliday())
+            {
+                dzisiejsze_inwestycje.Clear();
+                dzisiejsze_inwestycje = ctx.Inwestycja.Where(c => c.Data == data_aktualna).ToList();
+            }
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             Odśwież();
@@ -265,20 +332,28 @@ namespace GraInwestycyjna
             {
                 MessageBox.Show("Brak odpowiednich danych w bazie, nie można skonstruować portfela " + ex);
             }
-       //     WyswietlRynek(); 
+
+            OdświeżFirmy();
+            OdświeżPortfel();
+            WyswietlRynek();
+            OdświeżRynek();
+   //         WyswietlFirmy();
             WyswietlHistorie();
             WyswietlStanKonta();
-    //        if (TimerExample.DateList.Count()!=0)
-      //          czas_aktualny.Text = TimerExample.DateList[TimerExample.DateList.Count()-1].ToString();
+    
+        }
 
-            /* Wyświetl rynek odkomentowane bo przy odświeżaniu znikają kolumny - o co chodzi?*/
+
+        public void WyswietlFirmy()
+        {
+            dataGridView5.DataSource = ctx.Firma.ToList();
         }
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             //MessageBox.Show(e.ColumnIndex.ToString());
             
-            if (e.ColumnIndex == 1)
+            if (e.ColumnIndex == dataGridView2.Columns["Sell"].Index)
             {
                 // MessageBox.Show("Row:"+(e.RowIndex + 1) + " Column: " + (e.ColumnIndex + 1) + "  Column button clicked ");
                 // kup daną inwestycję
@@ -288,7 +363,7 @@ namespace GraInwestycyjna
                 DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
                 if (!data_aktualna.IsHoliday())
                 {
-                    string nazwa = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value.ToString();
+                    string nazwa = dataGridView2.Rows[e.RowIndex].Cells[dataGridView2.Columns["Nazwa"].Index].Value.ToString();
                     var inv = (from tmp1 in ctx.Inwestycja
                                where tmp1.Data.Day == data_aktualna.Day
                                where tmp1.Nazwa == nazwa
@@ -300,7 +375,7 @@ namespace GraInwestycyjna
                     //MessageBox.Show(dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex-1].Value.ToString());
                     try
                     {
-                        int ilość = Int32.Parse(dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex - 1].Value.ToString());
+                        int ilość = Int32.Parse(dataGridView2.Rows[e.RowIndex].Cells[dataGridView2.Columns["Ilość"].Index].Value.ToString());
                         // skąd wziąć kurs? sprawdzić czy ma tyle inwestycji
                         //  MessageBox.Show("Brak środków");
 
@@ -341,8 +416,6 @@ namespace GraInwestycyjna
             if (GameTime <= new DateTime(2014, 1, 16))
             {
                 czas_aktualny.Text = GameTime.ToString();
-                OdświeżPortfel();
-                OdświeżFirmy();
                 Odśwież();
             }
            
@@ -395,19 +468,38 @@ namespace GraInwestycyjna
                 }
                 else
                 {
-                    if (!data_aktualna.IsHoliday())
-                    {
-                        var inv = (from tmp in fm.Archiwum
+                    if (data_aktualna.IsHoliday())
+                        data_aktualna=data_aktualna.GetLastWorkingDay();
+                    var inv = (from tmp in fm.Archiwum
                                    where tmp.Nazwa == fm.Name
                                    where tmp.Data.Day == data_aktualna.Day
                                    select tmp).First();
 
-                        fm.AktualnaInwestycja = inv;
-                    }
+                    fm.AktualnaInwestycja = inv;
+                    
                 }
 
             }
+            try
+            { ctx.SaveChanges(); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("zapis bazy przy odświeżaniu firm "+ex);
+            }
         }
+
+        private void load_Click(object sender, EventArgs e)
+        {
+            this.chart1.Series["historia"].Points.AddXY(0, 10);
+            this.chart1.Series["historia"].Points.AddXY(10, 20);
+            this.chart1.Series["historia"].Points.AddXY(20, 30);
+            this.chart1.Series["historia"].Points.AddXY(30, 40);
+
+
+
+        }
+
+       
 
         
 
