@@ -5,4 +5,4 @@ Repozytorium nr 2 ze względu na zmieniony typ aplikacji z konsolowej na okienko
 ![diagram_przypadkow.png](https://bitbucket.org/repo/e9bEMG/images/2043180470-diagram_przypadkow.png)
 
 
-![diagram_ERD.jpg](https://bitbucket.org/repo/e9bEMG/images/614824107-diagram_ERD.jpg)
+![diagram_ERD_uaktualniony.JPG](https://bitbucket.org/repo/e9bEMG/images/3690523819-diagram_ERD_uaktualniony.JPG)
