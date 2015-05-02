@@ -14,6 +14,7 @@ using System.Web.UI.WebControls;
 using Investments;
 using System.Configuration;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Globalization;
 //using System.Timers;
 
 namespace GraInwestycyjna
@@ -31,6 +32,7 @@ namespace GraInwestycyjna
         DataGridViewCell cell_buy = new DataGridViewTextBoxCell();
         DataGridViewColumn iloscCol_sell = new DataGridViewColumn(); // add a column to the grid
         DataGridViewCell cell_sell = new DataGridViewTextBoxCell();
+        
         List<Inwestycja> dzisiejsze_inwestycje = new List<Inwestycja>();
         DateTime StartTime;
 
@@ -47,6 +49,11 @@ namespace GraInwestycyjna
 
            
             InitializeComponent();
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView5.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             czas_aktualny.Text =Convert.ToString(new DateTime(2014, 1, 2));
             WyswietlPortfel();
             WyswietlFirmy();
@@ -219,6 +226,43 @@ namespace GraInwestycyjna
             
             dataGridView2.Columns["ŚredniKursKupna"].DefaultCellStyle.Format = "n2";
             dataGridView2.Columns["Zysk"].DefaultCellStyle.Format = "n2";
+
+
+           // List<string> dobra = new List<string>();
+           // List<int> ilość = new List<int>();
+            var grupy = new Dictionary<string, int>();
+
+            foreach (var gr in ctx.Grupa)
+            {
+                grupy.Add(gr.Name,0);
+
+            }
+
+            //this.chart1.Series["historia"].ChartType = SeriesChartType.FastLine;
+            //this.chart1.Series["historia"].XValueType = ChartValueType.DateTime;
+            //chart1.Series.Add(series);
+
+           foreach (var rekord in Portfel.Rekords)
+           {
+               grupy[rekord.Typ] += rekord.Liczba;
+           }
+
+           List<string> keyList = new List<string>(grupy.Keys);        
+           List<int> valueList = new List<int>(grupy.Values);
+           
+
+            // bind the datapoints
+            chart2.Series["portfel"].Points.DataBindXY(keyList,valueList);
+            foreach (DataPoint dp in chart2.Series["portfel"].Points)
+                dp.IsEmpty = (dp.YValues[0] == 0) ? true : false;
+
+            chart2.Invalidate();
+
+
+
+
+
+
         }
 
         private void WyswietlHistorie()
@@ -459,8 +503,11 @@ namespace GraInwestycyjna
 
         void OdświeżFirmy()
         {
+           // CultureInfo provider = CultureInfo.InvariantCulture;
+           // string format = "yyyy-mm-dd";
+
+           // DateTime data_aktualna = DateTime.ParseExact(czas_aktualny.Text,format,provider);
             DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
-            
             foreach(var fm in ctx.Firma)
             {
                 if (fm.Name == "Przykład")
@@ -509,6 +556,21 @@ namespace GraInwestycyjna
             chartArea.AxisY.LabelStyle.Font = new Font("Consolas", 8);
             chart1.ChartAreas.Add(chartArea);
            */ 
+            List<DateTime> daty = new List<DateTime>();
+            List<double> kursy = new List<double>();
+            var tmp = (from fm in ctx.Firma
+                      where fm.Name == "AUD"
+                      select fm).First();
+            
+            foreach (var t in tmp.Archiwum)
+            {
+                daty.Add(t.Data);
+                kursy.Add(t.Kurs);
+            }
+
+
+           
+
             var xvals = new[]
                 {
                     new DateTime(2012, 4, 4), 
@@ -525,11 +587,8 @@ namespace GraInwestycyjna
             //chart1.Series.Add(series);
 
             // bind the datapoints
-            chart1.Series["historia"].Points.DataBindXY(xvals, yvals);
+            chart1.Series["historia"].Points.DataBindXY(daty, kursy);
             chart1.Invalidate();
-
-
-
 
         }
 

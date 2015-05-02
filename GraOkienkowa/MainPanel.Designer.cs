@@ -28,13 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainPanel));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.load = new System.Windows.Forms.Button();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.label1 = new System.Windows.Forms.Label();
             this.dataGridView4 = new System.Windows.Forms.DataGridView();
+            this.stan_konta = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -44,11 +51,9 @@
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.dataGridView5 = new System.Windows.Forms.DataGridView();
             this.button1 = new System.Windows.Forms.Button();
-            this.stan_konta = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.czas_aktualny = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.load = new System.Windows.Forms.Button();
+            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
@@ -61,6 +66,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -78,6 +84,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.chart2);
             this.tabPage1.Controls.Add(this.load);
             this.tabPage1.Controls.Add(this.chart1);
             this.tabPage1.Controls.Add(this.label1);
@@ -91,38 +98,66 @@
             this.tabPage1.Text = "Rynek";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // load
+            // 
+            this.load.Location = new System.Drawing.Point(628, 201);
+            this.load.Name = "load";
+            this.load.Size = new System.Drawing.Size(75, 23);
+            this.load.TabIndex = 10;
+            this.load.Text = "load";
+            this.load.UseVisualStyleBackColor = true;
+            this.load.Click += new System.EventHandler(this.load_Click);
+            // 
             // chart1
             // 
             this.chart1.BackColor = System.Drawing.Color.Transparent;
             this.chart1.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.chart1.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea1.BackColor = System.Drawing.Color.Transparent;
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea2.BackColor = System.Drawing.Color.Transparent;
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(344, 6);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Pastel;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.LabelFormat = "dd/MMM";
-            series1.Legend = "Legend1";
-            series1.Name = "historia";
-            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Date;
-            this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(384, 206);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.IsVisibleInLegend = false;
+            series2.LabelFormat = "dd/MMM";
+            series2.Legend = "Legend1";
+            series2.Name = "historia";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Date;
+            this.chart1.Series.Add(series2);
+            this.chart1.Size = new System.Drawing.Size(333, 206);
             this.chart1.TabIndex = 11;
             this.chart1.Text = "chart1";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(749, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Stan konta:";
+            // 
             // dataGridView4
             // 
+            this.dataGridView4.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView4.Location = new System.Drawing.Point(0, 0);
             this.dataGridView4.Name = "dataGridView4";
             this.dataGridView4.Size = new System.Drawing.Size(338, 230);
             this.dataGridView4.TabIndex = 10;
             this.dataGridView4.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView4_CellClick);
+            // 
+            // stan_konta
+            // 
+            this.stan_konta.Location = new System.Drawing.Point(752, 26);
+            this.stan_konta.Name = "stan_konta";
+            this.stan_konta.Size = new System.Drawing.Size(100, 20);
+            this.stan_konta.TabIndex = 6;
             // 
             // tabPage2
             // 
@@ -137,10 +172,11 @@
             // 
             // dataGridView2
             // 
+            this.dataGridView2.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView2.Location = new System.Drawing.Point(3, 3);
             this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(904, 224);
+            this.dataGridView2.Size = new System.Drawing.Size(738, 224);
             this.dataGridView2.TabIndex = 0;
             this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellClick);
             // 
@@ -156,10 +192,11 @@
             // 
             // dataGridView3
             // 
+            this.dataGridView3.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView3.Location = new System.Drawing.Point(3, 3);
             this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.Size = new System.Drawing.Size(904, 224);
+            this.dataGridView3.Size = new System.Drawing.Size(301, 224);
             this.dataGridView3.TabIndex = 0;
             // 
             // tabPage4
@@ -174,10 +211,11 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Location = new System.Drawing.Point(-4, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(904, 224);
+            this.dataGridView1.Size = new System.Drawing.Size(314, 230);
             this.dataGridView1.TabIndex = 3;
             // 
             // tabPage5
@@ -192,10 +230,11 @@
             // 
             // dataGridView5
             // 
+            this.dataGridView5.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView5.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView5.Location = new System.Drawing.Point(0, 0);
             this.dataGridView5.Name = "dataGridView5";
-            this.dataGridView5.Size = new System.Drawing.Size(907, 227);
+            this.dataGridView5.Size = new System.Drawing.Size(218, 227);
             this.dataGridView5.TabIndex = 0;
             // 
             // button1
@@ -208,52 +247,48 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // stan_konta
-            // 
-            this.stan_konta.Location = new System.Drawing.Point(767, 74);
-            this.stan_konta.Name = "stan_konta";
-            this.stan_konta.Size = new System.Drawing.Size(100, 20);
-            this.stan_konta.TabIndex = 6;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(764, 58);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Stan konta:";
-            // 
             // czas_aktualny
             // 
+            this.czas_aktualny.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.czas_aktualny.Location = new System.Drawing.Point(575, 30);
             this.czas_aktualny.Name = "czas_aktualny";
-            this.czas_aktualny.Size = new System.Drawing.Size(181, 20);
+            this.czas_aktualny.Size = new System.Drawing.Size(90, 26);
             this.czas_aktualny.TabIndex = 8;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Location = new System.Drawing.Point(497, 33);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(72, 13);
             this.label2.TabIndex = 9;
             this.label2.Text = "aktualny czas";
             // 
-            // load
+            // chart2
             // 
-            this.load.Location = new System.Drawing.Point(767, 179);
-            this.load.Name = "load";
-            this.load.Size = new System.Drawing.Size(75, 23);
-            this.load.TabIndex = 10;
-            this.load.Text = "load";
-            this.load.UseVisualStyleBackColor = true;
-            this.load.Click += new System.EventHandler(this.load_Click);
+            chartArea1.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea1);
+            this.chart2.DataSource = this.chart2.Images;
+            legend1.Name = "Legend1";
+            this.chart2.Legends.Add(legend1);
+            this.chart2.Location = new System.Drawing.Point(683, 61);
+            this.chart2.Name = "chart2";
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
+            series1.IsValueShownAsLabel = true;
+            series1.Legend = "Legend1";
+            series1.Name = "portfel";
+            this.chart2.Series.Add(series1);
+            this.chart2.Size = new System.Drawing.Size(231, 108);
+            this.chart2.TabIndex = 12;
+            this.chart2.Text = "chart2";
             // 
             // MainPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(957, 340);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.czas_aktualny);
@@ -274,6 +309,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabPage5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -299,5 +335,6 @@
         private System.Windows.Forms.DataGridView dataGridView5;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.Button load;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart2;
     }
 }
