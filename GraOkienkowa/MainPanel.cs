@@ -13,6 +13,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Investments;
 using System.Configuration;
+using System.Windows.Forms.DataVisualization.Charting;
 //using System.Timers;
 
 namespace GraInwestycyjna
@@ -490,10 +491,43 @@ namespace GraInwestycyjna
 
         private void load_Click(object sender, EventArgs e)
         {
-            this.chart1.Series["historia"].Points.AddXY(0, 10);
-            this.chart1.Series["historia"].Points.AddXY(10, 20);
-            this.chart1.Series["historia"].Points.AddXY(20, 30);
-            this.chart1.Series["historia"].Points.AddXY(30, 40);
+          //  this.chart1.Series["historia"].Points.AddXY(0, 10);
+          //  this.chart1.Series["historia"].Points.AddXY(10, 20);
+          //  this.chart1.Series["historia"].Points.AddXY(20, 30);
+           // this.chart1.Series["historia"].Points.AddXY(30, 40);
+           /* this.chart1.DataSource = dataGridView4;
+            this.chart1.Series["historia"].XValueMember = "Data";
+            this.chart1.Series["historia"].YValueMembers = "Kurs";
+            */
+
+         //   var chartArea = new ChartArea();
+         //   chartArea.AxisX.LabelStyle.Format = "dd/MMM\nhh:mm";
+          this.chart1.ChartAreas[0].AxisX.LabelStyle.Format = "dd/MMM";
+         /*   chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
+            chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
+            chartArea.AxisX.LabelStyle.Font = new Font("Consolas", 8);
+            chartArea.AxisY.LabelStyle.Font = new Font("Consolas", 8);
+            chart1.ChartAreas.Add(chartArea);
+           */ 
+            var xvals = new[]
+                {
+                    new DateTime(2012, 4, 4), 
+                    new DateTime(2012, 4, 5), 
+                    new DateTime(2012, 4, 6), 
+                    new DateTime(2012, 4, 7)
+                };
+            var yvals = new[] { 1, 3, 7, 12 };
+
+          //  var series = new Series();
+          //  series.Name = "Series1";
+           this.chart1.Series["historia"].ChartType = SeriesChartType.FastLine;
+           this.chart1.Series["historia"].XValueType = ChartValueType.DateTime;
+            //chart1.Series.Add(series);
+
+            // bind the datapoints
+            chart1.Series["historia"].Points.DataBindXY(xvals, yvals);
+            chart1.Invalidate();
+
 
 
 

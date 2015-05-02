@@ -106,8 +106,10 @@
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Pastel;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.LabelFormat = "dd/MMM";
             series1.Legend = "Legend1";
             series1.Name = "historia";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Date;
             this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(384, 206);
             this.chart1.TabIndex = 11;
