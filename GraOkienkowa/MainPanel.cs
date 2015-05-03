@@ -15,7 +15,7 @@ using Investments;
 using System.Configuration;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Globalization;
-//using System.Timers;
+
 
 namespace GraInwestycyjna
 {
@@ -25,7 +25,6 @@ namespace GraInwestycyjna
         string userPasswd = ConfigurationManager.AppSettings["UserPasswd"];
         Portfel Portfel = new Portfel();
         public GameDbContext ctx = new GameDbContext();
-       // DataGridViewCheckBoxColumn buy = new DataGridViewCheckBoxColumn();
         DataGridViewButtonColumn buy = new DataGridViewButtonColumn();
         DataGridViewButtonColumn sell = new DataGridViewButtonColumn();
         DataGridViewColumn  iloscCol_buy = new DataGridViewColumn(); // add a column to the grid
@@ -38,9 +37,6 @@ namespace GraInwestycyjna
 
         public MainPanel()
         {
-
-
-
             StartTime = DateTime.Now;
             var timer = new Timer();
             timer.Tick += new EventHandler(timer_Tick);
@@ -76,25 +72,12 @@ namespace GraInwestycyjna
                 dataGridView1.Columns[6].Visible = false;
                 dataGridView1.Columns[7].Visible = false;
                 dataGridView1.Columns[8].Visible = false;
-                //DataGridViewButtonColumn buy = new DataGridViewButtonColumn();
-                
-    /*            iloscCol_buy.HeaderText = "Ilość";
-                iloscCol_buy.Name = "ilość";
-                iloscCol_buy.Visible = true;
-                iloscCol_buy.Width = 40;
-                iloscCol_buy.CellTemplate = cell_buy;
 
+                dataGridView1.Columns["Nazwa"].ReadOnly = true;
+                dataGridView1.Columns["Kurs"].ReadOnly = true;
+                dataGridView1.Columns["Przelicznik"].ReadOnly = true;
+                dataGridView1.Columns["Data"].ReadOnly = true;
 
-                buy.Name = "Buy";
-                buy.Text = "buy";
-                buy.UseColumnTextForButtonValue = true;
-                if (dataGridView1.Columns["Ilość"] == null)
-                    dataGridView1.Columns.Add(iloscCol_buy);
-                if (dataGridView1.Columns["Buy"] == null)
-                {
-                    dataGridView1.Columns.Insert(7, buy);
-                }*/
-                
             }
             catch (Exception ex)
             {
@@ -104,7 +87,6 @@ namespace GraInwestycyjna
 
        private void dataGridView4_CellClick(object sender, DataGridViewCellEventArgs e)
        {
-         //  MessageBox.Show(e.ColumnIndex.ToString());
            if (e.ColumnIndex == dataGridView4.Columns["Buy"].Index)
            {
               
@@ -132,8 +114,9 @@ namespace GraInwestycyjna
                             user.Operacja.Add(operation);
                             user.StanKonta -= ilość * inv.Kurs * inv.Przelicznik;
                             MessageBox.Show("zakupiłeś inwestycje " + inv.Nazwa);
-                            Odśwież();
+                         //   Odśwież();
                             ctx.SaveChanges();
+                            
                         }
                     }
                     catch (Exception ex)
@@ -144,20 +127,11 @@ namespace GraInwestycyjna
            }
        }
 
-
-       
-
         private void WyswietlPortfel()
         {
-          //  var data = ctx.Użytkownik.Select(p => p);
-           
-           
-            
-            
             var user = (from tmp in ctx.Użytkownik
                         where tmp.Hasło == userPasswd
                         select tmp).First();
-           // MessageBox.Show("Ilość operacji użytkownika: "+user.Operacja.Count());
 
             foreach (var operation in user.Operacja)
             {
@@ -205,7 +179,24 @@ namespace GraInwestycyjna
                      */
                     // ;
                 }
-            
+
+       
+
+
+
+            //!!!!!!!!
+            int row_scroll = 0, col = 1, row = 1;
+            if (dataGridView2.Rows.Count > 0 && dataGridView2.Columns.Count > 0)
+            {
+                if (dataGridView2.CurrentCell != null && dataGridView2.FirstDisplayedCell != null)
+                {
+                    col = dataGridView2.CurrentCell.ColumnIndex;
+                    row = dataGridView2.CurrentCell.RowIndex;
+                    row_scroll = dataGridView2.FirstDisplayedCell.RowIndex;
+                }
+
+            }
+
             dataGridView2.DataSource = Portfel.Rekords.ToList();
             dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             iloscCol_sell.HeaderText = "Ilość";
@@ -213,6 +204,15 @@ namespace GraInwestycyjna
             iloscCol_sell.Visible = true;
             iloscCol_sell.Width = 40;
             iloscCol_sell.CellTemplate = cell_buy;
+
+            dataGridView2.Columns["Nazwa"].ReadOnly = true;
+            dataGridView2.Columns["KursAktualny"].ReadOnly = true;
+            dataGridView2.Columns["Przelicznik"].ReadOnly = true;
+            dataGridView2.Columns["Typ"].ReadOnly = true;
+            dataGridView2.Columns["Liczba"].ReadOnly = true;
+            dataGridView2.Columns["ŚredniKursKupna"].ReadOnly = true;
+            dataGridView2.Columns["OkresInwestycji"].ReadOnly = true;
+            dataGridView2.Columns["Zysk"].ReadOnly = true;
 
 
             sell.Name = "Sell";
@@ -223,45 +223,47 @@ namespace GraInwestycyjna
 
             if (dataGridView2.Columns["sell"] == null)
                 dataGridView2.Columns.Add(sell);
-            
+
             dataGridView2.Columns["ŚredniKursKupna"].DefaultCellStyle.Format = "n2";
             dataGridView2.Columns["Zysk"].DefaultCellStyle.Format = "n2";
 
 
-           // List<string> dobra = new List<string>();
-           // List<int> ilość = new List<int>();
             var grupy = new Dictionary<string, int>();
 
             foreach (var gr in ctx.Grupa)
             {
-                grupy.Add(gr.Name,0);
+                grupy.Add(gr.Name, 0);
 
             }
 
-            //this.chart1.Series["historia"].ChartType = SeriesChartType.FastLine;
-            //this.chart1.Series["historia"].XValueType = ChartValueType.DateTime;
-            //chart1.Series.Add(series);
+            foreach (var rekord in Portfel.Rekords)
+            {
+                grupy[rekord.Typ] += rekord.Liczba;
+            }
 
-           foreach (var rekord in Portfel.Rekords)
-           {
-               grupy[rekord.Typ] += rekord.Liczba;
-           }
+            List<string> keyList = new List<string>(grupy.Keys);
+            List<int> valueList = new List<int>(grupy.Values);
 
-           List<string> keyList = new List<string>(grupy.Keys);        
-           List<int> valueList = new List<int>(grupy.Values);
-           
 
             // bind the datapoints
-            chart2.Series["portfel"].Points.DataBindXY(keyList,valueList);
-            foreach (DataPoint dp in chart2.Series["portfel"].Points)
-                dp.IsEmpty = (dp.YValues[0] == 0) ? true : false;
+            if (keyList != null && valueList != null)
+            {
+                chart2.Series["portfel"].Points.DataBindXY(keyList, valueList);
+                foreach (DataPoint dp in chart2.Series["portfel"].Points)
+                    dp.IsEmpty = (dp.YValues[0] == 0) ? true : false;
 
-            chart2.Invalidate();
+                chart2.Invalidate();
+            }            
 
-
-
-
-
+            if (row_scroll != 0 && row_scroll < dataGridView2.Rows.Count)
+            {
+                dataGridView2.FirstDisplayedScrollingRowIndex = row_scroll;
+            }
+            if (dataGridView2.Rows.Count > 0 && dataGridView2.Columns.Count > 0 && dataGridView2.CurrentCell != null)
+                if (col < dataGridView2.Columns.Count && row < dataGridView2.Rows.Count)
+                    dataGridView2.CurrentCell = dataGridView2[col, row];
+            //!!!!!!!!
+            
 
         }
 
@@ -273,6 +275,18 @@ namespace GraInwestycyjna
                                 where user.Hasło == userPasswd
                                 select user).First();
 
+                    int row_scroll=0,col=1,row=1;
+                    if (dataGridView3.Rows.Count > 0 && dataGridView3.Columns.Count > 0)
+                    {
+                        if (dataGridView3.CurrentCell != null && dataGridView3.FirstDisplayedCell != null)
+                        {                             
+                            col = dataGridView3.CurrentCell.ColumnIndex;
+                            row = dataGridView3.CurrentCell.RowIndex;
+                            row_scroll = dataGridView3.FirstDisplayedCell.RowIndex;
+                        }
+
+                    }
+
                     dataGridView3.DataSource = data.Operacja.ToList();
                     dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                     dataGridView3.Columns["Id"].Visible = false;
@@ -280,6 +294,18 @@ namespace GraInwestycyjna
                     dataGridView3.Columns["UżytkownikId"].Visible = false;
                     dataGridView3.Columns["Użytkownik"].Visible = false;
                     dataGridView3.Columns["Inwestycja"].Visible = false;
+
+                    dataGridView3.Columns["Transakcja"].ReadOnly = true;
+                    dataGridView3.Columns["StempelCzasowy"].ReadOnly = true;
+                    dataGridView3.Columns["Ilość"].ReadOnly = true;
+
+                    if (row_scroll != 0 && row_scroll < dataGridView3.Rows.Count)
+                    {
+                        dataGridView3.FirstDisplayedScrollingRowIndex = row_scroll;
+                    }
+                    if (dataGridView3.Rows.Count > 0 && dataGridView3.Columns.Count > 0 && dataGridView3.CurrentCell != null)
+                        if(col<dataGridView3.Columns.Count && row <dataGridView3.Rows.Count)
+                        dataGridView3.CurrentCell = dataGridView3[col,row];
                 }
                 catch (Exception ex)
                 {
@@ -294,6 +320,7 @@ namespace GraInwestycyjna
                         where tmp.Hasło == userPasswd
                         select tmp).First();
              stan_konta.Text = user.StanKonta.ToString();
+             stan_konta.ReadOnly = true;
             
         }
 
@@ -304,7 +331,6 @@ namespace GraInwestycyjna
             if (!data_aktualna.IsHoliday())
             {
                 dzisiejsze_inwestycje.Clear();
-               // dzisiejsze_inwestycje = ctx.Inwestycja.Where(c => c.Data == data_aktualna).ToList();
                 foreach (var fm in ctx.Firma)
                 {
                     dzisiejsze_inwestycje.Add(fm.AktualnaInwestycja);
@@ -312,6 +338,20 @@ namespace GraInwestycyjna
 
                 try
                 {
+
+
+                    int row_scroll = 0, col = 1, row = 1;
+                    if (dataGridView4.Rows.Count > 0 && dataGridView4.Columns.Count > 0)
+                    {
+                        if (dataGridView4.CurrentCell != null && dataGridView4.FirstDisplayedCell != null)
+                        {
+                            col = dataGridView4.CurrentCell.ColumnIndex;
+                            row = dataGridView4.CurrentCell.RowIndex;
+                            row_scroll = dataGridView4.FirstDisplayedCell.RowIndex;
+                        }
+
+                    }
+
                     dataGridView4.DataSource = dzisiejsze_inwestycje.ToList();
                     dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                     dataGridView4.Columns["Id"].Visible = false;
@@ -321,7 +361,9 @@ namespace GraInwestycyjna
                     dataGridView4.Columns["Firma"].Visible = false;
                     dataGridView4.Columns["Data"].Visible = false;
 
-
+                    dataGridView4.Columns["Nazwa"].ReadOnly = true;
+                    dataGridView4.Columns["Kurs"].ReadOnly = true;
+                    dataGridView4.Columns["Przelicznik"].ReadOnly = true;
                     iloscCol_buy.HeaderText = "Ilość";
                     iloscCol_buy.Name = "ilość";
                     iloscCol_buy.Visible = true;
@@ -339,6 +381,18 @@ namespace GraInwestycyjna
                         dataGridView4.Columns.Add(buy);
                     }
 
+                    if (row_scroll != 0 && row_scroll < dataGridView4.Rows.Count)
+                    {
+                        dataGridView4.FirstDisplayedScrollingRowIndex = row_scroll;
+                    }
+                    if (dataGridView4.Rows.Count > 0 && dataGridView4.Columns.Count > 0 && dataGridView4.CurrentCell != null)
+                        if (col < dataGridView4.Columns.Count && row < dataGridView4.Rows.Count)
+                        {
+                            dataGridView4.CurrentCell = dataGridView4[col, row];
+                            //MessageBox.Show(dataGridView4.CurrentRow.Cells["Nazwa"].Value.ToString());
+                            wykres(dataGridView4.CurrentRow.Cells["Nazwa"].Value.ToString());
+                        }
+
                 }
                 catch (Exception ex)
                 {
@@ -350,12 +404,7 @@ namespace GraInwestycyjna
         public void OdświeżRynek()
         {
             DateTime data_aktualna = Convert.ToDateTime(czas_aktualny.Text);
-        /*    dzisiejsze_inwestycje.Clear();
-            foreach (var fm in ctx.Firma)
-            {
-                dzisiejsze_inwestycje.Add(fm.AktualnaInwestycja);
-            }
-            dataGridView4.DataSource = dzisiejsze_inwestycje;*/
+        
             if (!data_aktualna.IsHoliday())
             {
                 dzisiejsze_inwestycje.Clear();
@@ -382,16 +431,19 @@ namespace GraInwestycyjna
             OdświeżPortfel();
             WyswietlRynek();
             OdświeżRynek();
-   //         WyswietlFirmy();
             WyswietlHistorie();
             WyswietlStanKonta();
     
         }
 
+  
 
         public void WyswietlFirmy()
         {
             dataGridView5.DataSource = ctx.Firma.ToList();
+            dataGridView5.Columns["Id"].ReadOnly = true;
+            dataGridView5.Columns["Name"].ReadOnly = true;
+
         }
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -417,13 +469,9 @@ namespace GraInwestycyjna
                     var user = (from tmp in ctx.Użytkownik
                                 where tmp.Hasło == userPasswd
                                 select tmp).First();
-                    //MessageBox.Show(dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex-1].Value.ToString());
                     try
                     {
                         int ilość = Int32.Parse(dataGridView2.Rows[e.RowIndex].Cells[dataGridView2.Columns["Ilość"].Index].Value.ToString());
-                        // skąd wziąć kurs? sprawdzić czy ma tyle inwestycji
-                        //  MessageBox.Show("Brak środków");
-
                         var rekord = (from tmp in Portfel.Rekords
                                       where tmp.Nazwa == inv.Nazwa
                                       select tmp).First();
@@ -436,7 +484,6 @@ namespace GraInwestycyjna
                         }
                         else
                             MessageBox.Show("Nie masz tylu produktów!");
-                        Odśwież();
                         ctx.SaveChanges();
                     }
                     catch (Exception ex)
@@ -458,27 +505,24 @@ namespace GraInwestycyjna
             long ticks = duration.Ticks;
             ticks *= (24*60*6);
             GameTime += TimeSpan.FromTicks(ticks);
-            if (GameTime <= new DateTime(2014, 1, 16))
+            if (GameTime < new DateTime(2014, 1, 16))
             {
                 czas_aktualny.Text = GameTime.ToString();
                 Odśwież();
             }
            
-                if (GameTime == new DateTime(2014, 1, 16))
-                    MessageBox.Show("Ostatni dzień - wszystko działa");
+            if (GameTime == new DateTime(2014, 1, 16))
+                MessageBox.Show("Ostatni dzień - wszystko działa");
 
-          //  czas_aktualny.Text =DateTime.Now.ToString();
          }
 
         void OdświeżPortfel()
         {
-
             try 
             {
                 DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
                 if (!data_aktualna.IsHoliday())
                 {
-                    // MessageBox.Show("Kalkuluje");
                     foreach (var rekord in Portfel.Rekords)
                     {
                         var inv = (from tmp in ctx.Inwestycja
@@ -490,7 +534,6 @@ namespace GraInwestycyjna
                         rekord.OkresInwestycji++;
 
                         Portfel.OperacjeDodane.OrderBy(o => o.StempelCzasowy).ToList();
-                        //  MessageBox.Show(Portfel.OperacjeDodane[0].ToString());
                         rekord.Zysk = (inv.Kurs - Portfel.OperacjeDodane[0].Inwestycja.Kurs) * rekord.Liczba;
                     }
                 }
@@ -503,10 +546,6 @@ namespace GraInwestycyjna
 
         void OdświeżFirmy()
         {
-           // CultureInfo provider = CultureInfo.InvariantCulture;
-           // string format = "yyyy-mm-dd";
-
-           // DateTime data_aktualna = DateTime.ParseExact(czas_aktualny.Text,format,provider);
             DateTime data_aktualna = DateTime.Parse(czas_aktualny.Text);
             foreach(var fm in ctx.Firma)
             {
@@ -518,13 +557,19 @@ namespace GraInwestycyjna
                 {
                     if (data_aktualna.IsHoliday())
                         data_aktualna=data_aktualna.GetLastWorkingDay();
-                    var inv = (from tmp in fm.Archiwum
+                    try
+                    {
+                        var inv = (from tmp in fm.Archiwum
                                    where tmp.Nazwa == fm.Name
                                    where tmp.Data.Day == data_aktualna.Day
                                    select tmp).First();
 
-                    fm.AktualnaInwestycja = inv;
-                    
+                        fm.AktualnaInwestycja = inv;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("odświeżanie firm " + fm.Name+" "+ex);
+                    }
                 }
 
             }
@@ -538,63 +583,76 @@ namespace GraInwestycyjna
 
         private void load_Click(object sender, EventArgs e)
         {
-          //  this.chart1.Series["historia"].Points.AddXY(0, 10);
-          //  this.chart1.Series["historia"].Points.AddXY(10, 20);
-          //  this.chart1.Series["historia"].Points.AddXY(20, 30);
-           // this.chart1.Series["historia"].Points.AddXY(30, 40);
-           /* this.chart1.DataSource = dataGridView4;
-            this.chart1.Series["historia"].XValueMember = "Data";
-            this.chart1.Series["historia"].YValueMembers = "Kurs";
-            */
+            ;
 
-         //   var chartArea = new ChartArea();
-         //   chartArea.AxisX.LabelStyle.Format = "dd/MMM\nhh:mm";
-          this.chart1.ChartAreas[0].AxisX.LabelStyle.Format = "dd/MMM";
-         /*   chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisX.LabelStyle.Font = new Font("Consolas", 8);
-            chartArea.AxisY.LabelStyle.Font = new Font("Consolas", 8);
-            chart1.ChartAreas.Add(chartArea);
-           */ 
+            //wybieranie dóbr do wyświetleniach wykresów
+
+            /*   if(dataGridView4.CurrentCell != null)
+               {
+                   int col = dataGridView4.CurrentCell.RowIndex;
+                   int row = dataGridView4.CurrentCell.ColumnIndex;
+
+                   string cur = dataGridView4[col, row].Value.ToString();
+                   MessageBox.Show("wybrana waluta: " + cur);
+               }*/
+        }
+
+        public void wykres(string nazwa)
+        {
+            this.chart1.ChartAreas[0].AxisX.LabelStyle.Format = "dd/MMM";
             List<DateTime> daty = new List<DateTime>();
+            List<DateTime> daty_śr = new List<DateTime>();
             List<double> kursy = new List<double>();
+            List<double> średnia_5_dni = new List<double>();
             var tmp = (from fm in ctx.Firma
-                      where fm.Name == "AUD"
-                      select fm).First();
-            
+                       where fm.Name == nazwa //"AUD"
+                       select fm).First();
+
+            // średnia krocząca
+            int counter = 0, okres = 5;
+            List<double> elem = new List<double>();
             foreach (var t in tmp.Archiwum)
             {
                 daty.Add(t.Data);
                 kursy.Add(t.Kurs);
+                if (counter < okres)
+                {
+                    elem.Add(t.Kurs);
+                    counter++;
+                }
+                if (counter == okres)
+                {
+                    double średnia = 0;
+
+                    for (int i = (elem.Count - okres); i < elem.Count; i++)
+                    {
+                        średnia += elem[i];
+                    }
+                    średnia_5_dni.Add(średnia / okres);
+                    daty_śr.Add(t.Data);
+                    counter = okres - 1;
+                }
             }
 
+            this.chart1.Series["średnia5dni"].ChartType = SeriesChartType.FastLine;
+            this.chart1.Series["średnia5dni"].XValueType = ChartValueType.DateTime;
 
-           
+            this.chart1.Series["historia"].ChartType = SeriesChartType.FastLine;
+            this.chart1.Series["historia"].XValueType = ChartValueType.DateTime;
 
-            var xvals = new[]
-                {
-                    new DateTime(2012, 4, 4), 
-                    new DateTime(2012, 4, 5), 
-                    new DateTime(2012, 4, 6), 
-                    new DateTime(2012, 4, 7)
-                };
-            var yvals = new[] { 1, 3, 7, 12 };
+            //this.chart1.ChartAreas[0].AxisY.Minimum = 2;
+            //this.chart1.ChartAreas[0].AxisY.Maximum = 3;
+            chart1.Titles.Clear();   // Unnecessary if you have already clear
+            Title Title = new Title(nazwa, Docking.Top, new Font("Verdana", 12), Color.Black);
+            chart1.Titles.Add(Title);
 
-          //  var series = new Series();
-          //  series.Name = "Series1";
-           this.chart1.Series["historia"].ChartType = SeriesChartType.FastLine;
-           this.chart1.Series["historia"].XValueType = ChartValueType.DateTime;
-            //chart1.Series.Add(series);
 
             // bind the datapoints
             chart1.Series["historia"].Points.DataBindXY(daty, kursy);
-            chart1.Invalidate();
-
+            chart1.Series["historia"].Color = Color.Red;
+            chart1.Series["średnia5dni"].Points.DataBindXY(daty_śr, średnia_5_dni);
+            chart1.Series["średnia5dni"].Color = Color.Green;
         }
-
-       
-
-        
 
     } //MainPanel
 } //GraInwestycyjna namespace

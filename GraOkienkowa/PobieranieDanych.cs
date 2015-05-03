@@ -64,7 +64,7 @@ namespace Investments
 
 
                     counter++;
-                    if (counter > 10)
+                    if (counter > 30)
                         break;// -> warunek by zakończyć wczytywanie po 10 plikach
                     if (zakoncz)
                         break;

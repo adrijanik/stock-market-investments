@@ -42,6 +42,8 @@ namespace Investments
             context.Użytkownik.Add(user);
             Operacja operacja = new Operacja() {Id = 0, Ilość = 5, Transakcja = transakcja.kupno, Inwestycja = tmp1, StempelCzasowy = new DateTime(2015,4,4), Użytkownik=user };
             context.Operacja.Add(operacja);
+           // grupa = new Grupa() { Name = "Obligacje"};
+           // context.Grupa.Add(grupa);
             try
             { context.SaveChanges(); }
             catch (Exception ex)

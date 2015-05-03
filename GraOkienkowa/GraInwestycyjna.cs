@@ -25,26 +25,16 @@ namespace GraInwestycyjna
             hasło_txt.PasswordChar='*';
             hasło_txt.MaxLength = 8;
 
-         /*   foreach (var op in ctx.Operacja)
-                ctx.Operacja.Remove(op);
-
-            foreach (var user in ctx.Użytkownik)
-            {
-                if (user.Login == "adri")
-                    ctx.Użytkownik.Remove(user);
-            }
-            ctx.SaveChanges();
-            
-*/
+        
          //   StwórzFirmy();
          
         
-       //     UsunNiepotrzebne_Sprzatacz();
-       //     StwórzWaluty();
+        //   UsunNiepotrzebne_Sprzatacz();
+        //   StwórzWaluty();
         
             
           //  service.PobieranieDanychAkcje();
-       //     service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
+       //   service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
    
          //   service.DodajPrzykladowoInwestycje();
          //   service.WypiszInwestycje();
