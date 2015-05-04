@@ -162,7 +162,7 @@ namespace GraInwestycyjna
         {
             string line;
             System.IO.StreamReader file =
-            new System.IO.StreamReader(@"C:\Users\Adri\Desktop\Bats_Stocks.txt");
+            new System.IO.StreamReader(@"Bats_Stocks.txt");
             while ((line = file.ReadLine()) != null)
             {
                 string nazwa = line;
@@ -175,7 +175,7 @@ namespace GraInwestycyjna
         {
             string line;
             System.IO.StreamReader file =
-                new System.IO.StreamReader(@"C:\Users\Adri\Desktop\waluty.txt");
+                new System.IO.StreamReader(@"waluty.txt");
          //   Inwestycja init = new Inwestycja { Nazwa = "init", Data = DateTime.Now, Kurs = 0 };
             while ((line = file.ReadLine()) != null)
             {

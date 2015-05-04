@@ -80,20 +80,21 @@
             this.tabControl1.Location = new System.Drawing.Point(27, 72);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1005, 256);
+            this.tabControl1.Size = new System.Drawing.Size(1011, 256);
             this.tabControl1.TabIndex = 4;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.load);
             this.tabPage1.Controls.Add(this.chart1);
+            this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.dataGridView4);
             this.tabPage1.Controls.Add(this.stan_konta);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(997, 230);
+            this.tabPage1.Size = new System.Drawing.Size(1003, 230);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Rynek";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -118,7 +119,7 @@
             this.chart1.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(317, 6);
+            this.chart1.Location = new System.Drawing.Point(332, 3);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Pastel;
             series1.ChartArea = "ChartArea1";
@@ -139,7 +140,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(888, 7);
+            this.label1.Location = new System.Drawing.Point(903, 50);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(62, 13);
             this.label1.TabIndex = 7;
@@ -151,13 +152,13 @@
             this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView4.Location = new System.Drawing.Point(0, 0);
             this.dataGridView4.Name = "dataGridView4";
-            this.dataGridView4.Size = new System.Drawing.Size(311, 230);
+            this.dataGridView4.Size = new System.Drawing.Size(331, 230);
             this.dataGridView4.TabIndex = 10;
             this.dataGridView4.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView4_CellClick);
             // 
             // stan_konta
             // 
-            this.stan_konta.Location = new System.Drawing.Point(891, 23);
+            this.stan_konta.Location = new System.Drawing.Point(900, 77);
             this.stan_konta.Name = "stan_konta";
             this.stan_konta.Size = new System.Drawing.Size(100, 20);
             this.stan_konta.TabIndex = 6;
@@ -243,31 +244,31 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(840, 43);
+            this.button1.Location = new System.Drawing.Point(916, 172);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 5;
-            this.button1.Text = "Odśwież";
+            this.button1.Text = "refresh";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // czas_aktualny
             // 
-            this.czas_aktualny.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.czas_aktualny.Location = new System.Drawing.Point(575, 30);
+            this.czas_aktualny.Font = new System.Drawing.Font("Palatino Linotype", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.czas_aktualny.Location = new System.Drawing.Point(911, 30);
             this.czas_aktualny.Name = "czas_aktualny";
-            this.czas_aktualny.Size = new System.Drawing.Size(90, 26);
+            this.czas_aktualny.Size = new System.Drawing.Size(100, 33);
             this.czas_aktualny.TabIndex = 8;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(497, 33);
+            this.label2.Location = new System.Drawing.Point(908, 9);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.Size = new System.Drawing.Size(31, 13);
             this.label2.TabIndex = 9;
-            this.label2.Text = "aktualny czas";
+            this.label2.Text = "date:";
             // 
             // chart2
             // 
@@ -296,7 +297,6 @@
             this.ClientSize = new System.Drawing.Size(1044, 340);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.czas_aktualny);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControl1);
             this.Name = "MainPanel";
             this.Text = "MainPanel";
