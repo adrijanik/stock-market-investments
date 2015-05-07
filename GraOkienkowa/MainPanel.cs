@@ -21,7 +21,15 @@ namespace GraInwestycyjna
 {
     public partial class MainPanel : Form
     {
-        
+        //clock
+        Timer t = new Timer();
+        int WIDTH = 50, HEIGHT = 50, secHAND = 20, minHAND = 110, hrHAND = 80;
+        //center
+        int cx, cy;
+        Bitmap bmp;
+        Graphics g;
+        const int MAX_COUNT = 60;
+
         string userPasswd = ConfigurationManager.AppSettings["UserPasswd"];
         Portfel Portfel = new Portfel();
         public GameDbContext ctx = new GameDbContext();
@@ -34,7 +42,13 @@ namespace GraInwestycyjna
         
         List<Inwestycja> dzisiejsze_inwestycje = new List<Inwestycja>();
         DateTime StartTime;
-
+        //DateTime PauseTime;
+        bool play_ = false;
+        bool pause_ = false;
+        int counter = 0;
+      
+        DateTime GameTime = new DateTime(2014, 1, 2);
+        
         public MainPanel()
         {
             StartTime = DateTime.Now;
@@ -45,6 +59,8 @@ namespace GraInwestycyjna
 
            
             InitializeComponent();
+            //Clock clock = new Clock(pictureBox1);
+
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -499,21 +515,28 @@ namespace GraInwestycyjna
 
         void timer_Tick(object sender, EventArgs e)
         {
-           
-           var GameTime = new DateTime(2014, 1, 2);
-            TimeSpan duration = DateTime.Now - StartTime;
-            long ticks = duration.Ticks;
-            ticks *= (24*60*6);
-            GameTime += TimeSpan.FromTicks(ticks);
-            if (GameTime < new DateTime(2014, 1, 16))
+         /*   if (play_)
             {
-                czas_aktualny.Text = GameTime.ToString();
-                Odśwież();
-            }
-           
-            if (GameTime == new DateTime(2014, 1, 16))
-                MessageBox.Show("Ostatni dzień - wszystko działa");
+                var GameTime = new DateTime(2014, 1, 2);
+                TimeSpan duration = DateTime.Now - StartTime;
+                long ticks = duration.Ticks;
+                ticks *= (24 * 60 * 6);
+                GameTime += TimeSpan.FromTicks(ticks);
+                if (pause_)
+                {
+                    StartTime = DateTime.Now;
+                    play_ = false;
+                }
+                //PauseTime = GameTime;
+                if (GameTime < new DateTime(2014, 1, 16))
+                {
+                    czas_aktualny.Text = GameTime.ToString();
+                    Odśwież();
+                }
 
+                if (GameTime == new DateTime(2014, 1, 16))
+                    MessageBox.Show("Ostatni dzień - wszystko działa");
+            }*/
          }
 
         void OdświeżPortfel()
@@ -653,6 +676,137 @@ namespace GraInwestycyjna
             chart1.Series["średnia5dni"].Points.DataBindXY(daty_śr, średnia_5_dni);
             chart1.Series["średnia5dni"].Color = Color.Green;
         }
+
+        private void play_Click(object sender, EventArgs e)
+        {
+            play_ = true;
+            pause_ = false;
+        }
+
+        private void stop_Click(object sender, EventArgs e)
+        {
+            play_ = false;
+            czas_aktualny.Text = new DateTime(2014, 1, 2).ToString();
+            StartTime = DateTime.Now;
+        }
+
+        private void pause_Click(object sender, EventArgs e)
+        {
+            pause_ = true;
+            StartTime = DateTime.Now;
+            play_ = false;
+        }
+
+
+        private void t_Tick(object sender, EventArgs e)
+        {
+            //create graphics
+            if (play_)
+            {
+                g = Graphics.FromImage(bmp);
+
+                //get time
+                int ss = DateTime.Now.Second;
+                int mm = DateTime.Now.Minute;
+                int hh = DateTime.Now.Hour;
+
+                int[] handCoord = new int[2];
+
+                //clear
+                g.Clear(Color.Transparent);
+                //draw circle
+                g.DrawEllipse(new Pen(Color.LightGray, 2f), 0, 0, WIDTH, HEIGHT);
+                //second hand
+                handCoord = msCoord(ss, secHAND);
+                g.DrawLine(new Pen(Color.LightGray, 2f), new Point(cx, cy), new Point(handCoord[0], handCoord[1]));
+                //load bmp in picturebox1
+                pictureBox1.Image = bmp;
+                g.Dispose();
+
+                if (counter == MAX_COUNT)
+                {
+
+                   
+              //      TimeSpan duration = DateTime.Now - StartTime;
+              //      long ticks = duration.Ticks;
+               //     MessageBox.Show("Ticks in one day "+ticks);
+             //       ticks *= (24 * 60);
+             //       day = ticks;
+             //       GameTime += TimeSpan.FromTicks(ticks);
+                    TimeSpan time_span = new TimeSpan(1, 0, 0, 0, 0);
+                    GameTime += time_span;
+                    //PauseTime = GameTime;
+                  //  if (GameTime < new DateTime(2014, 1, 16))
+                  //  {
+                        czas_aktualny.Text = GameTime.ToString();
+                        Odśwież();
+                  //  }
+
+                  /*  if (GameTime == new DateTime(2014, 1, 16))
+                        MessageBox.Show("Ostatni dzień - wszystko działa");
+                    */
+                    counter = 0;
+                }
+                counter++;
+            }
+        }
+
+        //coord for minute and second hand
+        private int[] msCoord(int val, int hlen)
+        {
+            int[] coord = new int[2];
+            val *= 6;   //each minute and second make 6 degree
+
+            if (val >= 0 && val <= 180)
+            {
+                coord[0] = cx + (int)(hlen * Math.Sin(Math.PI * val / 180));
+                coord[1] = cy - (int)(hlen * Math.Cos(Math.PI * val / 180));
+            }
+            else
+            {
+                coord[0] = cx - (int)(hlen * -Math.Sin(Math.PI * val / 180));
+                coord[1] = cy - (int)(hlen * Math.Cos(Math.PI * val / 180));
+            }
+            return coord;
+        }
+
+        private void MainPanel_Load(object sender, EventArgs e)
+        {
+            //create bitmap
+            bmp = new Bitmap(WIDTH + 1, HEIGHT + 1);
+
+            //center
+            cx = WIDTH / 2;
+            cy = HEIGHT / 2;
+
+            //backcolor
+         //   this.BackColor = Color.Red;
+
+            //timer
+            t.Interval = 1000;      //half second in millisecond
+            t.Tick += new EventHandler(this.t_Tick);
+            t.Start();
+
+        }
+
+        private void next_right_Click(object sender, EventArgs e)
+        {
+
+            TimeSpan time_span = new TimeSpan(1, 0, 0, 0, 0);
+            GameTime += time_span;
+            czas_aktualny.Text = GameTime.ToString();
+            Odśwież();
+        }
+
+        private void next_left_Click(object sender, EventArgs e)
+        {
+            TimeSpan time_span = new TimeSpan(1, 0, 0, 0, 0);
+            GameTime -= time_span;
+            czas_aktualny.Text = GameTime.ToString();
+            Odśwież();
+        }
+
+
 
     } //MainPanel
 } //GraInwestycyjna namespace

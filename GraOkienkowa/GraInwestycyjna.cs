@@ -29,12 +29,12 @@ namespace GraInwestycyjna
          //   StwórzFirmy();
          
         
-        //   UsunNiepotrzebne_Sprzatacz();
-        //   StwórzWaluty();
+       //    UsunNiepotrzebne_Sprzatacz();
+      //     StwórzWaluty();
         
             
           //  service.PobieranieDanychAkcje();
-       //   service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
+     //     service.PobieranieDanychWaluty(); // uwaga -> trwa około 30 minut
    
          //   service.DodajPrzykladowoInwestycje();
          //   service.WypiszInwestycje();
@@ -77,8 +77,15 @@ namespace GraInwestycyjna
         private void button1_Click(object sender, EventArgs e)
         {
             Użytkownik tmp = new Użytkownik() {Login=login,Hasło=hasło,Nickname=nickname,StanKonta=100000 };
-            ctx.Użytkownik.Add(tmp);
-            ctx.SaveChanges();
+            try
+            {
+                ctx.Użytkownik.Add(tmp);
+                ctx.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Initializing database "+ex);
+            }
             MessageBox.Show("Done! Account created!");
 
         }
